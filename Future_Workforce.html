@@ -1,0 +1,1338 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Ապագայի աշխատաշուկան</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Armenian:wdth,wght@62.5..100,100..900&family=Noto+Serif+Armenian:wdth,wght@62.5..100,100..900&family=Noto+Sans:wdth,wght@62.5..100,100..900&family=Noto+Serif:wdth,wght@62.5..100,100..900&display=swap">
+<style>
+/* Layout: a small bilingual (hy/en) site for a class. Sticky nav lettered Ա–Ե / A–E switches between six screens:
+   a start screen built around "the year you start working", four content sections and the quiz. */
+:root {
+  --bg: #EDF1F4;
+  --surface: #FFFFFF;
+  --surface-2: #E2E8ED;
+  --ink: #13202C;
+  --muted: #4F5E6C;
+  --line: #CDD6DE;
+  --accent: #C1531A;          /* apricot, darkened for contrast */
+  --accent-soft: #FAE2D1;
+  --on-accent: #FFFFFF;
+  --good: #1D7247;
+  --good-soft: #DCEFE3;
+  --bad: #A93636;
+  --bad-soft: #F6DFDF;
+  --f-tech: #2D58C8;
+  --f-bio: #B3344D;
+  --f-eco: #26784B;
+  --f-edu: #7449BC;
+
+  --display: "Noto Serif Armenian", "Noto Serif", "Sylfaen", Georgia, serif;
+  --body: "Noto Sans Armenian", "Noto Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+
+  --step--1: 0.875rem;
+  --step-0: 1.0625rem;
+  --step-1: 1.25rem;
+  --step-2: 1.6rem;
+  --step-3: clamp(1.9rem, 1.4rem + 2vw, 2.6rem);
+  --step-4: clamp(2.4rem, 1.6rem + 3.6vw, 4.2rem);
+  --radius: 14px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0D151C; --surface: #15212B; --surface-2: #1C2B37; --ink: #E6ECF0; --muted: #98A8B5; --line: #2A3A47;
+    --accent: #F08A47; --accent-soft: #3A2415; --on-accent: #1A0D04;
+    --good: #5CC48C; --good-soft: #14301F; --bad: #EE7F7F; --bad-soft: #3A1B1B;
+    --f-tech: #7F9EF2; --f-bio: #EE8197; --f-eco: #6DC690; --f-edu: #B38EF0;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0D151C; --surface: #15212B; --surface-2: #1C2B37; --ink: #E6ECF0; --muted: #98A8B5; --line: #2A3A47;
+  --accent: #F08A47; --accent-soft: #3A2415; --on-accent: #1A0D04;
+  --good: #5CC48C; --good-soft: #14301F; --bad: #EE7F7F; --bad-soft: #3A1B1B;
+  --f-tech: #7F9EF2; --f-bio: #EE8197; --f-eco: #6DC690; --f-edu: #B38EF0;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 72px; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; animation: none !important; } }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: var(--step-0);
+  line-height: 1.6;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--surface); }
+.wrap {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; line-height: 1.15; }
+p { margin: 0; }
+a { color: var(--accent); }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+.muted { color: var(--muted); }
+.prose { max-width: 65ch; }
+
+/* ---------- top bar ---------- */
+.topbar {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+}
+.topbar .wrap { display: flex; align-items: center; gap: 16px; padding-block: 10px; }
+.brand { font-family: var(--display); font-weight: 800; font-stretch: 80%; font-size: 1.1rem; white-space: nowrap; color: var(--ink); text-decoration: none; }
+.nav { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; min-width: 0; flex: 1; }
+.nav::-webkit-scrollbar { display: none; }
+.nav a {
+  display: flex; align-items: baseline; gap: 6px;
+  padding: 6px 10px; border-radius: 8px;
+  color: var(--muted); text-decoration: none; white-space: nowrap; font-size: 0.95rem;
+}
+.nav a b { font-family: var(--display); color: var(--accent); font-size: 1.05rem; }
+.nav a:hover { background: var(--surface-2); color: var(--ink); }
+.nav a[aria-current="page"] { background: var(--surface-2); color: var(--ink); }
+.lang { display: flex; gap: 2px; padding: 3px; border: 1px solid var(--line); border-radius: 10px; flex-shrink: 0; }
+.lang button { border: 0; background: none; padding: 4px 10px; border-radius: 7px; cursor: pointer; font-size: 0.9rem; font-weight: 700; color: var(--muted); }
+.lang button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+@media (max-width: 760px) { .brand { display: none; } }
+
+/* ---------- start screen ---------- */
+.hero { padding-block: 56px 40px; }
+.hero-grid { display: grid; grid-template-columns: 1.25fr 1fr; gap: 40px; align-items: start; }
+.eyebrow { font-size: var(--step--1); letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); font-weight: 700; }
+.hero h1 { font-size: var(--step-4); font-weight: 800; font-stretch: 78%; margin-top: 10px; letter-spacing: -0.01em; }
+.hero .lead { font-size: var(--step-1); margin-top: 18px; max-width: 34em; }
+.cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 20px; border-radius: 10px; border: 1px solid var(--line);
+  background: var(--surface); color: var(--ink); text-decoration: none; font-weight: 600; cursor: pointer;
+}
+.btn:hover { border-color: var(--ink); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.btn.primary:hover { filter: brightness(1.08); }
+
+.yearcard {
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 24px; display: grid; gap: 14px;
+}
+.ylabel { font-weight: 600; }
+.ages { display: flex; flex-wrap: wrap; gap: 6px; }
+.ages button {
+  min-width: 44px; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--line);
+  background: var(--bg); cursor: pointer; font-variant-numeric: tabular-nums; font-weight: 600;
+}
+.ages button[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.bigyear {
+  font-family: var(--display); font-weight: 900; font-stretch: 70%;
+  font-size: clamp(4.2rem, 3rem + 5vw, 6.6rem); line-height: 0.95; color: var(--accent);
+  font-variant-numeric: tabular-nums; letter-spacing: -0.02em;
+}
+.yearcard .note { font-size: var(--step--1); color: var(--muted); }
+
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; margin-top: 44px; border-top: 1px solid var(--line); }
+.stat { padding: 18px 20px 0 0; display: grid; gap: 4px; align-content: start; }
+.stat + .stat { padding-left: 20px; border-left: 1px solid var(--line); }
+.stat .num { font-family: var(--display); font-weight: 800; font-stretch: 80%; font-size: var(--step-3); font-variant-numeric: tabular-nums; }
+.stat .cap { color: var(--muted); font-size: 0.97rem; }
+.source { font-size: var(--step--1); color: var(--muted); margin-top: 16px; }
+@media (max-width: 820px) {
+  .hero-grid { grid-template-columns: 1fr; }
+  .stats { grid-template-columns: 1fr; }
+  .stat, .stat + .stat { padding: 14px 0; border-left: 0; border-bottom: 1px solid var(--line); }
+}
+
+.menu-wrap { padding-block: 8px 64px; }
+.menu-title { font-size: var(--step-2); font-weight: 800; font-stretch: 85%; margin-bottom: 16px; }
+.menu { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.mcard {
+  display: grid; grid-template-columns: auto 1fr; gap: 16px; align-items: start;
+  padding: 20px 22px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+  color: var(--ink); text-decoration: none; transition: border-color 0.15s, transform 0.15s;
+}
+.mcard:hover { border-color: var(--accent); transform: translateY(-2px); }
+.mletter { font-family: var(--display); font-weight: 900; font-stretch: 70%; font-size: 2.6rem; line-height: 0.9; color: var(--accent); min-width: 1ch; }
+.mbody { display: grid; gap: 4px; min-width: 0; }
+.mbody b { font-family: var(--display); font-size: var(--step-1); line-height: 1.25; }
+.mbody span { color: var(--muted); font-size: 0.97rem; }
+.mcard.featured { grid-column: span 2; background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.mcard.featured .mletter, .mcard.featured .mbody span { color: var(--on-accent); }
+@media (max-width: 900px) { .menu { grid-template-columns: repeat(2, minmax(0, 1fr)); } .mcard.featured { grid-column: 1 / -1; order: 1; } }
+@media (max-width: 560px) { .menu { grid-template-columns: 1fr; } }
+
+/* ---------- section screens ---------- */
+section.block { padding-block: 40px 64px; }
+.sec-head { display: grid; grid-template-columns: auto 1fr; gap: 6px 22px; align-items: start; margin-bottom: 30px; }
+.sec-letter {
+  font-family: var(--display); font-weight: 900; font-stretch: 70%;
+  font-size: clamp(3.4rem, 2.6rem + 3vw, 5rem); line-height: 0.85; color: var(--accent);
+  grid-row: span 2; min-width: 1ch;
+}
+.sec-head h2 { font-size: var(--step-3); font-weight: 800; font-stretch: 85%; }
+.sec-head p { color: var(--muted); font-size: var(--step-1); max-width: 40em; }
+h3.sub { font-size: var(--step-2); font-weight: 700; font-stretch: 88%; margin: 44px 0 16px; }
+.sec-head + h3.sub { margin-top: 0; }
+.pager { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--line); }
+
+/* field tabs */
+.tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; }
+.tab {
+  padding: 10px 16px; border-radius: 999px; border: 1px solid var(--line);
+  background: var(--surface); cursor: pointer; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;
+}
+.tab i { width: 10px; height: 10px; border-radius: 50%; background: var(--fc); display: inline-block; }
+.tab[aria-selected="true"] { background: var(--fc); border-color: var(--fc); color: var(--surface); }
+.tab[aria-selected="true"] i { background: var(--surface); }
+
+.profgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 760px) { .profgrid { grid-template-columns: 1fr; } }
+.prof {
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+  border-top: 4px solid var(--fc); padding: 20px 22px; display: grid; gap: 10px; align-content: start; min-width: 0;
+}
+.prof .alt { font-size: var(--step--1); color: var(--fc); font-weight: 700; letter-spacing: 0.02em; }
+.prof h4 { font-family: var(--display); font-size: var(--step-1); font-weight: 700; margin: 0; line-height: 1.25; }
+.prof .why { font-size: 0.97rem; color: var(--muted); }
+.prof .why b { color: var(--ink); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.chips .lbl { font-size: var(--step--1); color: var(--muted); margin-right: 2px; }
+.chip { font-size: var(--step--1); padding: 3px 10px; border-radius: 999px; background: var(--surface-2); }
+
+/* skills */
+.tshape { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 32px; align-items: center; margin-bottom: 36px; }
+.tdiag { display: grid; justify-items: center; }
+.tdiag .bar { width: 100%; max-width: 420px; background: var(--accent); color: var(--on-accent); border-radius: 10px 10px 4px 4px; padding: 12px 16px; text-align: center; font-weight: 700; }
+.tdiag .stem { width: 140px; min-height: 170px; background: var(--ink); color: var(--bg); border-radius: 0 0 10px 10px; padding: 14px 10px; text-align: center; font-weight: 700; display: grid; align-content: center; }
+.tdiag small { display: block; font-weight: 400; opacity: 0.85; font-size: var(--step--1); }
+.tside { display: grid; gap: 18px; }
+.callout { border-left: 4px solid var(--accent); padding: 4px 0 4px 18px; font-size: var(--step-1); }
+@media (max-width: 760px) { .tshape { grid-template-columns: 1fr; } }
+
+.skillcols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
+@media (max-width: 820px) { .skillcols { grid-template-columns: 1fr; } }
+.skillcol h3 { font-size: var(--step-2); font-weight: 700; font-stretch: 88%; margin-bottom: 4px; }
+.skillcol > p { color: var(--muted); margin-bottom: 16px; }
+.skill { padding: 16px 0; border-top: 1px solid var(--line); display: grid; gap: 6px; }
+.skill h4 { margin: 0; font-size: var(--step-1); font-family: var(--display); font-weight: 700; }
+.skill h4 span { font-family: var(--body); font-size: var(--step--1); font-weight: 600; color: var(--muted); margin-left: 6px; }
+.skill .try { font-size: 0.97rem; background: var(--surface); border-radius: 10px; padding: 10px 14px; border: 1px solid var(--line); }
+.skill .try b { color: var(--accent); }
+
+/* AI */
+.shift { display: grid; gap: 10px; }
+.shift-row, .shift-head { display: grid; grid-template-columns: minmax(0, 1fr) 40px minmax(0, 1fr) minmax(0, 1.6fr); gap: 14px; align-items: center; }
+.shift-row { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 18px; }
+.shift-row .old { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--bad); text-decoration-thickness: 2px; }
+.shift-row .arrow { color: var(--accent); font-size: 1.4rem; text-align: center; }
+.shift-row .new { font-weight: 700; }
+.shift-row .how { font-size: 0.95rem; color: var(--muted); }
+.shift-head { padding: 0 18px; font-size: var(--step--1); color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; }
+@media (max-width: 760px) {
+  .shift-head { display: none; }
+  .shift-row { grid-template-columns: 1fr; gap: 4px; }
+  .shift-row .arrow { text-align: left; transform: rotate(90deg); width: 24px; }
+}
+.principle { margin-top: 18px; font-size: var(--step-1); max-width: 46em; }
+
+.human { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 960px) { .human { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .human { grid-template-columns: 1fr; } }
+.human article { background: var(--surface); border-radius: var(--radius); border: 1px solid var(--line); padding: 20px; display: grid; gap: 8px; align-content: start; }
+.human h4 { margin: 0; font-family: var(--display); font-size: var(--step-1); font-weight: 700; }
+.human .ex { font-size: 0.95rem; color: var(--muted); }
+
+.game-top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 16px; }
+.game-tools { display: flex; gap: 14px; align-items: center; }
+.score { font-weight: 700; font-variant-numeric: tabular-nums; }
+.tasks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+@media (max-width: 760px) { .tasks { grid-template-columns: 1fr; } }
+.task { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; display: grid; gap: 12px; align-content: start; }
+.task .q { font-weight: 600; font-size: 1.05rem; }
+.choices { display: flex; flex-wrap: wrap; gap: 8px; }
+.choices button { padding: 8px 16px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); cursor: pointer; font-weight: 600; }
+.choices button:hover:not(:disabled) { border-color: var(--ink); }
+.choices button:disabled { cursor: default; opacity: 0.55; }
+.choices button.right { background: var(--good-soft); border-color: var(--good); color: var(--good); opacity: 1; }
+.choices button.wrong { background: var(--bad-soft); border-color: var(--bad); color: var(--bad); opacity: 1; }
+.task .exp { font-size: 0.95rem; }
+.task .exp b.ok { color: var(--good); }
+.task .exp b.no { color: var(--bad); }
+
+/* quiz */
+.quiz { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: clamp(20px, 3vw, 40px); }
+.qprog { display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: var(--step--1); color: var(--muted); font-weight: 600; }
+.qbar { height: 6px; background: var(--surface-2); border-radius: 99px; margin: 10px 0 26px; overflow: hidden; }
+.qbar span { display: block; height: 100%; background: var(--accent); border-radius: 99px; transition: width 0.3s ease; }
+.quiz h3.qtext { font-size: var(--step-3); font-weight: 800; font-stretch: 85%; margin-bottom: 22px; }
+.opts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 640px) { .opts { grid-template-columns: 1fr; } }
+.opt {
+  display: grid; grid-template-columns: 40px 1fr; gap: 14px; align-items: center; text-align: left;
+  padding: 16px 18px; border-radius: 12px; border: 2px solid var(--line); background: var(--bg); cursor: pointer; font-size: var(--step-0);
+}
+.opt:hover { border-color: var(--accent); }
+.opt[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
+.opt .ltr { font-family: var(--display); font-weight: 800; font-size: 1.4rem; color: var(--accent); text-align: center; }
+.qnav { margin-top: 20px; display: flex; gap: 10px; }
+.linkbtn { background: none; border: 0; color: var(--muted); cursor: pointer; padding: 6px 0; text-decoration: underline; }
+
+.result { display: grid; gap: 22px; }
+.arche { display: grid; gap: 10px; }
+.arche .aname { font-size: var(--step-4); font-weight: 800; font-stretch: 78%; }
+.arche .second { color: var(--muted); max-width: 46em; }
+.rprof { display: grid; gap: 10px; padding-top: 26px; border-top: 1px solid var(--line); }
+.rprof .rname { font-size: var(--step-3); font-weight: 800; font-stretch: 78%; color: var(--accent); }
+.result .tag { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; color: var(--fc); }
+.result .tag i { width: 10px; height: 10px; border-radius: 50%; background: var(--fc); }
+.result .rlead { font-size: var(--step-1); max-width: 44em; }
+.rcols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.rcols.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (max-width: 860px) { .rcols.three { grid-template-columns: 1fr; } }
+@media (max-width: 760px) { .rcols { grid-template-columns: 1fr; } }
+.rbox { background: var(--bg); border-radius: 12px; padding: 18px 20px; min-width: 0; }
+.rbox h4 { margin: 0 0 8px; font-family: var(--display); font-size: var(--step-1); }
+.rbox ul { margin: 0; padding-left: 1.2em; display: grid; gap: 6px; }
+.profile { display: grid; gap: 8px; }
+.prow { display: grid; grid-template-columns: 150px minmax(0, 1fr) 44px; gap: 12px; align-items: center; font-size: 0.95rem; }
+.prow .track { height: 12px; background: var(--surface-2); border-radius: 99px; overflow: hidden; }
+.prow .fill { height: 100%; background: var(--accent); border-radius: 99px; }
+.prow .pct { text-align: right; font-variant-numeric: tabular-nums; color: var(--muted); }
+@media (max-width: 520px) { .prow { grid-template-columns: 110px minmax(0, 1fr) 40px; } }
+.alts-block { display: grid; gap: 10px; }
+.alts-block h4 { margin: 0; font-family: var(--display); font-size: var(--step-1); }
+.alts { display: flex; flex-wrap: wrap; gap: 10px; }
+.disclaimer { font-size: 0.97rem; color: var(--muted); max-width: 46em; }
+
+/* tips */
+.stages { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (max-width: 900px) { .stages { grid-template-columns: 1fr; } }
+.stage { padding: 0 24px 0 0; display: grid; gap: 4px; align-content: start; }
+.stage + .stage { padding-left: 24px; border-left: 1px solid var(--line); }
+@media (max-width: 900px) { .stage, .stage + .stage { padding: 0 0 24px; border-left: 0; } .stage + .stage { padding-top: 24px; border-top: 1px solid var(--line); } }
+.stage .when { font-size: var(--step--1); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; color: var(--accent); }
+.stage h3 { font-size: var(--step-2); font-weight: 800; font-stretch: 85%; margin-bottom: 10px; }
+.tip { padding: 12px 0; border-top: 1px solid var(--line); }
+.tip h4 { margin: 0 0 4px; font-size: 1.05rem; }
+.tip p { font-size: 0.97rem; color: var(--muted); }
+.closing { margin-top: 48px; padding-top: 40px; border-top: 1px solid var(--line); }
+.closing p { font-family: var(--display); font-size: var(--step-3); font-weight: 700; font-stretch: 85%; line-height: 1.25; max-width: 30em; text-wrap: balance; }
+
+footer { padding-block: 28px 48px; font-size: var(--step--1); color: var(--muted); border-top: 1px solid var(--line); }
+footer p + p { margin-top: 6px; }
+</style>
+
+<header class="topbar">
+  <div class="wrap">
+    <a class="brand" href="#home" id="brand">Ապագայի աշխատաշուկան</a>
+    <nav class="nav" id="nav"></nav>
+    <div class="lang" role="group" aria-label="Լեզու / Language">
+      <button type="button" data-lang="hy" lang="hy">Հայ</button>
+      <button type="button" data-lang="en" lang="en">EN</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="view" id="home"></div>
+  <section class="block view" id="professions" hidden></section>
+  <section class="block view" id="skills" hidden></section>
+  <section class="block view" id="ai" hidden></section>
+  <section class="block view" id="test" hidden></section>
+  <section class="block view" id="tips" hidden></section>
+</main>
+
+<footer><div class="wrap" id="foot"></div></footer>
+
+<script>
+(function () {
+  "use strict";
+  const $ = (s, r = document) => r.querySelector(s);
+
+  /* =====================================================================
+     Language-independent data: ids, fields, weights, answers
+     Traits: T technology, H life science, N nature, P people, C creativity, A analysis
+     ===================================================================== */
+  const VIEWS = ["home", "professions", "skills", "ai", "test", "tips"];
+  const FIELD_KEYS = ["tech", "bio", "eco", "edu"];
+  const FIELD_COLORS = { tech: "var(--f-tech)", bio: "var(--f-bio)", eco: "var(--f-eco)", edu: "var(--f-edu)" };
+  const TKEYS = ["T", "H", "N", "P", "C", "A"];
+
+  const PROFS = [
+    { id: "ai-ethics", field: "tech", w: { T: 2, P: 2, A: 2 } },
+    { id: "prompt", field: "tech", w: { T: 3, C: 2, A: 1 } },
+    { id: "cyber", field: "tech", w: { T: 3, A: 3 } },
+    { id: "data", field: "tech", w: { T: 2, A: 3 } },
+    { id: "genetic", field: "bio", w: { H: 3, A: 2, T: 1 } },
+    { id: "robo-surgery", field: "bio", w: { H: 3, T: 2, P: 1 } },
+    { id: "telemed", field: "bio", w: { H: 2, P: 2, T: 1 } },
+    { id: "bionic", field: "bio", w: { H: 2, T: 2, C: 1 } },
+    { id: "green-energy", field: "eco", w: { N: 2, T: 2, A: 1 } },
+    { id: "eco-urban", field: "eco", w: { N: 2, C: 2, P: 1 } },
+    { id: "recycling", field: "eco", w: { N: 3, H: 1, A: 1 } },
+    { id: "eco-tourism", field: "eco", w: { N: 2, C: 3, T: 1, P: 1 } },
+    { id: "learning-path", field: "edu", w: { P: 3, A: 1, C: 1 } },
+    { id: "vr-teacher", field: "edu", w: { P: 2, T: 2, C: 2 } },
+    { id: "digital-wellbeing", field: "edu", w: { P: 3, H: 1, T: 1 } },
+    { id: "edu-games", field: "edu", w: { C: 3, T: 2, P: 1 } }
+  ];
+
+  const TASK_ANS = ["ai", "human", "both", "human", "ai", "human", "ai", "both"];
+
+  // option weights per question, same order as the texts below
+  const QW = [
+    [{ P: 2 }, { N: 2 }, { T: 2 }, { H: 2 }],
+    [{ C: 2 }, { T: 2 }, { P: 2 }, { A: 2 }],
+    [{ N: 2 }, { T: 1, C: 1 }, { H: 1, A: 1 }, { P: 2 }],
+    [{ P: 2 }, { C: 2 }, { T: 2 }, { A: 2 }],
+    [{ T: 1, A: 1 }, { H: 2 }, { N: 2 }, { C: 1, P: 1 }],
+    [{ C: 2 }, { A: 2 }, { P: 2 }, { T: 2 }],
+    [{ T: 1, C: 1 }, { A: 2 }, { H: 1, P: 1 }, { N: 1, C: 1 }],
+    [{ N: 2 }, { H: 2 }, { T: 1, A: 1 }, { P: 2 }],
+    [{ H: 2 }, { N: 2 }, { T: 1, A: 1 }, { P: 2 }],
+    [{ A: 2 }, { C: 2 }, { P: 2 }, { T: 1, H: 1 }],
+    [{ T: 1, H: 1 }, { N: 2 }, { C: 2 }, { H: 1, A: 1 }],
+    [{ P: 2 }, { C: 2 }, { A: 1, H: 1 }, { N: 2 }]
+  ];
+
+  /* =====================================================================
+     Armenian
+     ===================================================================== */
+  const HY = {
+    ui: {
+      docTitle: "Ապագայի աշխատաշուկան",
+      brand: "Ապագայի աշխատաշուկան",
+      navAria: "Բաժիններ",
+      letters: ["Ա", "Բ", "Գ", "Դ", "Ե"],
+      optLetters: ["Ա", "Բ", "Գ", "Դ"],
+      nav: ["Մասնագիտություններ", "Հմտություններ", "ԱԲ և ավտոմատացում", "Թեստ", "Խորհուրդներ"],
+      viewNames: { home: "Գլխավոր", professions: "Ա. Մասնագիտություններ", skills: "Բ. Հմտություններ", ai: "Գ. ԱԲ և ավտոմատացում", test: "Դ. Թեստ", tips: "Ե. Խորհուրդներ" },
+      pagerAria: "Բաժինների միջև",
+      backHome: "Վերադառնալ գլխավոր էջ",
+      and: "և",
+
+      eyebrow: "Հասարակագիտություն · Աշխատաշուկայի ապագան",
+      h1: "Ի՞նչ աշխատանք է քեզ սպասում վաղը",
+      lead: "Բարև։ Այս կայքը քո ուղեկիցն է դեպի ապագայի աշխատաշուկա։ Այստեղ կպարզես, թե ինչ մասնագիտություններ են լինելու պահանջված, ինչ հմտություններ են պետք և ինչպես պատրաստվել ապագային հենց այսօրվանից։",
+      cta1: "Անցնել թեստը",
+      cta2: "Դիտել մասնագիտությունները",
+      ageLabel: "Քանի՞ տարեկան ես",
+      startWork: "Դու կսկսես աշխատել մոտավորապես",
+      yearText: n => "Մինչ այդ ունես " + n + " տարի պատրաստվելու համար։ Այդ ժամանակ աշխարհն արդեն այլ կլինի։",
+      ageNote: "Հաշվարկը ենթադրում է, որ կսկսես աշխատել մոտ 22 տարեկանում՝ ուսումն ավարտելուց հետո։",
+      stats: [
+        ["170 մլն", "նոր աշխատատեղ կստեղծվի աշխարհում մինչև 2030 թվականը"],
+        ["92 մլն", "աշխատատեղ կվերանա ավտոմատացման և այլ փոփոխությունների պատճառով"],
+        ["39%", "այսօրվա աշխատանքային հմտություններից կփոխվի կամ կհնանա մինչև 2030 թվականը"]
+      ],
+      source: "Աղբյուր՝ Համաշխարհային տնտեսական ֆորում, «Աշխատատեղերի ապագան 2025» զեկույց։ Ընդհանուր առմամբ աշխարհում կավելանա մոտ 78 միլիոն աշխատատեղ, բայց շատերը ստիպված կլինեն նոր հմտություններ սովորել։",
+      menuTitle: "Ընտրիր բաժինը",
+      menu: [
+        ["Ապագայի մասնագիտություններ", "16 մասնագիտություն 4 ոլորտում"],
+        ["Անհրաժեշտ հմտություններ", "«Փափուկ» և «կոշտ» հմտություններ 21-րդ դարի համար"],
+        ["ԱԲ և ավտոմատացում", "Ինչ կփոխվի, ինչ կմնա մարդուն, և խաղ դասարանի համար"],
+        ["Թեստ․ «Ո՞րն է քո ապագայի մասնագիտությունը»", "12 հարց, քո տիպը, ուժեղ կողմերդ և քեզ հարմար մասնագիտությունները"],
+        ["Խորհուրդներ դպրոցականներին", "Ինչ անել հիմա, ավագ դպրոցում և միշտ"]
+      ],
+
+      profTitle: "Ապագայի մասնագիտություններ",
+      profIntro: "Շատ մասնագիտություններ, որոնք 10 տարի հետո սովորական կլինեն, այսօր դեռ նոր են հնչում։ Ընտրիր ոլորտը և ծանոթացիր։",
+      fieldsAria: "Ոլորտներ",
+      whyLabel: "Ինչու է պահանջված։",
+      subjLabel: "Դպրոցում օգնում են՝",
+
+      skillsTitle: "Անհրաժեշտ հմտություններ 21-րդ դարում",
+      skillsIntro: "Միայն տեխնիկական գիտելիքը բավարար չէ։ Գործատուները փնտրում են մարդկանց, ովքեր կարող են մտածել, համագործակցել և արագ սովորել։",
+      tBar: "«Փափուկ» հմտություններ", tBarSmall: "լայնություն. աշխատել ցանկացած թիմում",
+      tStem: "«Կոշտ» հմտություններ", tStemSmall: "խորություն մեկ ոլորտում",
+      tText: "Ապագայի մասնագետին հաճախ համեմատում են <b>T</b> տառի հետ։ Ուղղահայաց գիծը խորը գիտելիքն է մեկ ոլորտում. դրանք «կոշտ» հմտություններն են, որոնք կարելի է չափել և ստուգել։ Հորիզոնական գիծը «փափուկ» հմտություններն են. դրանք թույլ են տալիս աշխատել տարբեր մարդկանց հետ, հարմարվել փոփոխություններին և անընդհատ նոր բաներ սովորել։",
+      callout: "Գործատուների 10-ից 7-ը <b>վերլուծական մտածողությունը</b> համարում են ամենակարևոր հմտությունը։ Ամենաարագ աճում է ԱԲ-ի, տվյալների և կիբեռանվտանգության հմտությունների պահանջարկը։",
+      softTitle: "«Փափուկ» հմտություններ", softSub: "Soft skills. Ինչպես ես մտածում, շփվում և աշխատում ուրիշների հետ։",
+      hardTitle: "«Կոշտ» հմտություններ", hardSub: "Hard skills. Կոնկրետ գիտելիքներ և գործիքներ, որոնք կարելի է սովորել։",
+      practice: "Ինչպես մարզել՝",
+
+      aiTitle: "Արհեստական բանականությունը (ԱԲ) և ավտոմատացումը",
+      aiIntro: "Կխլե՞ն արդյոք ռոբոտները մեր աշխատանքը։ Պատասխանը միանշանակ չէ. որոշ գործեր կվերանան, շատերը կփոխվեն, իսկ որոշները միշտ կմնան մարդուն։",
+      shiftTitle: "Ո՞ր մասնագիտություններն են փոխվելու",
+      shiftHead: ["Այսօր", "Վաղը", "Ինչ է փոխվում"],
+      principle: "Մեքենաները վերցնում են կրկնվող առաջադրանքները, որոնք կատարվում են միևնույն կանոններով։ Մասնագիտությունը հաճախ մնում է, բայց փոխվում է նրա բովանդակությունը. մարդուն մնում է այն, ինչը պահանջում է դատողություն, ստեղծագործություն և շփում։",
+      humanTitle: "Ի՞նչը ռոբոտները չեն կարող փոխարինել",
+      gameTitle: "Խաղ՝ մա՞րդ, ԱԲ, թե՞ միասին",
+      gameIntro: "Ըստ քեզ՝ ո՞վ ավելի լավ կանի այս գործը։ Ընտրիր պատասխանը և կտեսնես բացատրությունը, հետո քննարկեք դասարանով։",
+      score: (c, a) => "Ճիշտ՝ " + c + " / " + a,
+      reset: "Սկսել նորից",
+      labels: { ai: "ԱԲ", human: "Մարդ", both: "Միասին" },
+      right: "Ճիշտ է։",
+      wrong: l => "Ոչ այնքան։ Ճիշտ պատասխանը՝ " + l + "։",
+
+      testTitle: "Թեստ․ «Ո՞րն է քո ապագայի մասնագիտությունը»",
+      testIntro: "Պատասխանիր 12 հարցի։ Ճիշտ կամ սխալ պատասխաններ չկան. ընտրիր այն, ինչն ավելի մոտ է քեզ։ Վերջում կիմանաս քո տիպը, ուժեղ կողմերդ և քեզ հարմար մասնագիտությունները։",
+      qOf: (i, n) => "Հարց " + i + " / " + n,
+      back: "← Նախորդ հարցը",
+      result: "Արդյունք",
+      yourType: "Քո տիպը",
+      second: (n, s) => "Քո մեջ կան նաև <b>«" + n + "»</b> տիպի գծեր։ " + s,
+      strengthsT: "Քո ուժեղ կողմերը",
+      shineT: "Որտեղ կփայլես",
+      growT: "Ինչ զարգացնել",
+      profileT: "Քո հետաքրքրությունների պրոֆիլը",
+      matchEyebrow: "Քո պատասխանների հիման վրա քեզ շատ կհամապատասխանի",
+      traitsLine: l => "Քո պատասխաններում ուժեղ են այս ուղղությունները՝ " + l + "։ Հենց դրանք են կարևոր այս մասնագիտության մեջ։",
+      needSkills: "Ինչ հմտություններ են պետք",
+      startNow: "Ինչից սկսել հենց հիմա",
+      alsoFit: "Քեզ նաև կհամապատասխանեն",
+      disclaimer: "Սա խաղ է, ոչ թե վճիռ։ Հետաքրքրությունները փոխվում են տարիքի հետ, և դա նորմալ է։ Փորձիր տարբեր ոլորտներ և խոսիր այդ մասնագիտությունների ներկայացուցիչների հետ։",
+      retry: "Անցնել թեստը նորից",
+      allProfs: "Բոլոր մասնագիտությունները",
+
+      tipsTitle: "Խորհուրդներ դպրոցականներին",
+      tipsIntro: "Ապագային պատրաստվելը սկսվում է ոչ թե համալսարանում, այլ հենց հիմա։ Ահա թե ինչ կարող ես անել դպրոցի տարբեր տարիներին։",
+      closing: "Ապագայի մասնագիտությունը կարող է դեռ անուն էլ չունենալ։ Բայց հմտությունները, որոնք դու զարգացնում ես այսօր, քեզ հետ կմնան ցանկացած մասնագիտության մեջ։",
+      foot1: 'Աղբյուրներ՝ <a href="https://www.weforum.org/publications/the-future-of-jobs-report-2025/" target="_blank" rel="noopener">World Economic Forum, Future of Jobs Report 2025</a>, ՄԱԿ-ի քաղաքաշինության կանխատեսումներ (World Urbanization Prospects)։',
+      foot2: "Պատրաստված է հասարակագիտության դասի համար։"
+    },
+    fields: { tech: "Տեխնոլոգիա և ԱԲ", bio: "Բժշկություն և բիոտեխնոլոգիա", eco: "Բնապահպանություն և էներգետիկա", edu: "Կրթություն և սոցիալական ոլորտ" },
+    traits: { T: "Տեխնիկա", H: "Կենսաբանություն", N: "Բնություն", P: "Մարդիկ", C: "Ստեղծարարություն", A: "Վերլուծություն" },
+    profs: {
+      "ai-ethics": { name: "Արհեստական բանականության էթիկայի մասնագետ",
+        does: "Հետևում է, որ ԱԲ համակարգերը լինեն արդար, անվտանգ և թափանցիկ։ Օրինակ՝ որ աշխատանքի ընդունող ալգորիթմը մարդկանց նկատմամբ խտրականություն չդրսևորի ըստ սեռի կամ ազգության։",
+        why: "Որքան շատ որոշումներ են կայացնում մեքենաները, այնքան ավելի են պետք մարդիկ, ովքեր հարցնում են՝ «Իսկ սա արդա՞ր է»։",
+        subjects: ["Հասարակագիտություն", "Ինֆորմատիկա", "Գրականություն"],
+        skills: ["Քննադատական մտածողություն", "Էթիկա և իրավունք", "ԱԲ-ի աշխատանքի սկզբունքներ", "Բանավեճի հմտություն"],
+        steps: ["Մասնակցիր բանավեճի ակումբի", "Փորձիր գտնել, թե երբ է ԱԲ չատբոտը սխալ կամ կողմնակալ պատասխան տալիս", "Հետևիր ԱԲ-ի և օրենքների մասին նորություններին"] },
+      "prompt": { name: "ԱԲ հրահանգների ինժեներ",
+        does: "Գիտի, թե ինչպես «խոսել» ԱԲ-ի հետ, որպեսզի ստանա ճշգրիտ և օգտակար արդյունք։ Ընկերությունների համար ստեղծում է ԱԲ-ով աշխատող գործիքներ՝ տեքստերից մինչև նկարներ և ծրագրային կոդ։",
+        why: "ԱԲ գործիքներն արդեն ամենուր են, բայց արդյունքը կախված է նրանից, թե որքան լավ է մարդը ձևակերպում առաջադրանքը։",
+        subjects: ["Ինֆորմատիկա", "Հայոց լեզու", "Անգլերեն"],
+        skills: ["Հստակ գրավոր խոսք", "Տրամաբանական մտածողություն", "ԱԲ գործիքների իմացություն", "Ստեղծարարություն"],
+        steps: ["Նույն հարցը տուր ԱԲ-ին 3 տարբեր ձևով և համեմատիր պատասխանները", "Սովորիր ծրագրավորման հիմունքներ, օրինակ՝ Python", "Վարժվիր գրել հստակ և հակիրճ"] },
+      "cyber": { name: "Կիբեռանվտանգության փորձագետ",
+        does: "Պաշտպանում է բանկերը, հիվանդանոցները, պետական համակարգերը և սովորական մարդկանց հաքերային հարձակումներից։ Գտնում է համակարգերի թույլ կետերը, քանի դեռ չարագործները չեն գտել դրանք։",
+        why: "Ամեն ինչ տեղափոխվում է համացանց, իսկ կիբեռհարձակումները դառնում են ավելի բարդ։ Աշխարհում այս մասնագետների մեծ պակաս կա։",
+        subjects: ["Ինֆորմատիկա", "Մաթեմատիկա", "Ֆիզիկա"],
+        skills: ["Ցանցեր և համակարգեր", "Վերլուծական մտածողություն", "Ուշադրություն մանրուքների նկատմամբ", "Էթիկա"],
+        steps: ["Պաշտպանիր քո հաշիվները՝ ուժեղ գաղտնաբառեր և երկքայլ ստուգում", "Մասնակցիր դպրոցականների համար CTF (Capture the Flag) մրցույթների", "Սովորիր, թե ինչպես է աշխատում համացանցը"] },
+      "data": { name: "Տվյալների գիտնական",
+        does: "Հսկայական քանակությամբ տվյալներում գտնում է օրինաչափություններ և կանխատեսումներ անում։ Օրինակ՝ որտեղ բացել նոր կանգառ, երբ կսկսվի գրիպի համաճարակը կամ ինչ երաժշտություն առաջարկել քեզ։",
+        why: "Տվյալների և ԱԲ մասնագետներն աշխարհում ամենաարագ աճող մասնագիտությունների շարքում են։",
+        subjects: ["Մաթեմատիկա", "Ինֆորմատիկա", "Անգլերեն"],
+        skills: ["Վիճակագրություն", "Ծրագրավորում", "Տվյալների պատկերում գրաֆիկներով", "Հետաքրքրասիրություն"],
+        steps: ["Հավաքիր տվյալներ քո դասարանի մասին (օրինակ՝ քնի ժամերը) և կառուցիր գրաֆիկ", "Սովորիր աշխատել աղյուսակներով (Excel, Google Sheets)", "Մաթեմատիկայում հատուկ ուշադրություն դարձրու հավանականությանը"] },
+      "genetic": { name: "Գենետիկական մոդելավորող",
+        does: "Համակարգչային մոդելների օգնությամբ ուսումնասիրում է ԴՆԹ-ն և կանխատեսում, թե ինչ հիվանդությունների հակում ունի մարդը։ Օգնում է ստեղծել դեղեր, որոնք համապատասխանում են կոնկրետ մարդու գեներին։",
+        why: "Բժշկությունը դառնում է անհատական՝ «մեկ դեղ բոլորի համար»-ից դեպի «քո դեղը՝ քեզ համար»։",
+        subjects: ["Կենսաբանություն", "Քիմիա", "Մաթեմատիկա"],
+        skills: ["Կենսաբանության խորը գիտելիք", "Տվյալների վերլուծություն", "Ծրագրավորում", "Համբերություն"],
+        steps: ["Կենսաբանության մեջ խորացիր գենետիկայի թեմայում", "Մասնակցիր կենսաբանության օլիմպիադայի", "Փորձիր ծրագրավորում՝ գիտական տվյալներ մշակելու համար"] },
+      "robo-surgery": { name: "Ռոբոտացված վիրաբուժության օպերատոր",
+        does: "Կառավարում է վիրաբուժական ռոբոտներ, որոնք վիրահատություններ են կատարում միլիմետրային ճշգրտությամբ։ Աշխատում է բժիշկների թիմի հետ և հետևում, որ ռոբոտն անսխալ աշխատի։",
+        why: "Ռոբոտային վիրահատությունները փոքրացնում են կտրվածքները և արագացնում ապաքինումը, և դրանց թիվն ամեն տարի աճում է։",
+        subjects: ["Կենսաբանություն", "Ֆիզիկա", "Ինֆորմատիկա"],
+        skills: ["Անատոմիա", "Ձեռքերի ճշգրիտ շարժումներ", "Սառնասրտություն սթրեսի պայմաններում", "Թիմային աշխատանք"],
+        steps: ["Զարգացրու ձեռքերի ճշգրտությունը՝ մոդելավորում, երաժշտական գործիք", "Միացիր ռոբոտաշինության խմբակի", "Կարդա մարդու անատոմիայի մասին"] },
+      "telemed": { name: "Տելեբժշկության մասնագետ",
+        does: "Տեսազանգով և խելացի սարքերի օգնությամբ հեռավար խորհրդատվություն է տալիս պացիենտներին։ Հատկապես կարևոր է գյուղերում և հեռավոր բնակավայրերում, որտեղ բժիշկ չկա։",
+        why: "Խելացի ժամացույցներն ու սենսորներն արդեն չափում են զարկերակը, ճնշումը և քունը։ Պետք են մասնագետներ, ովքեր կհասկանան այդ տվյալները և կօգնեն մարդուն։",
+        subjects: ["Կենսաբանություն", "Ինֆորմատիկա", "Հայոց լեզու"],
+        skills: ["Բժշկական գիտելիք", "Հաղորդակցում", "Էմպատիա", "Թվային գործիքներ"],
+        steps: ["Սովորիր առաջին բուժօգնություն", "Կամավորիր Կարմիր խաչում կամ առողջապահական նախագծում", "Վարժվիր պարզ լեզվով բացատրել բարդ բաներ"] },
+      "bionic": { name: "Բիոնիկ պրոթեզների ինժեներ",
+        does: "Ստեղծում է արհեստական ձեռքեր և ոտքեր, որոնք կառավարվում են մկանների կամ նյարդերի ազդանշաններով։ Միավորում է բժշկությունը, ռոբոտաշինությունը և 3D տպագրությունը։",
+        why: "3D տպիչներն ու սենսորները էժանանում են, և բիոնիկ պրոթեզները դառնում են մատչելի հազարավոր մարդկանց համար։",
+        subjects: ["Ֆիզիկա", "Կենսաբանություն", "Մաթեմատիկա"],
+        skills: ["Մեխանիկա և էլեկտրոնիկա", "Անատոմիա", "3D մոդելավորում", "Էմպատիա"],
+        steps: ["Փորձիր 3D մոդելավորում, օրինակ՝ Tinkercad-ում", "Հավաքիր պարզ ռոբոտ Arduino-ով", "Իմացիր, թե ինչպես են աշխատում մկաններն ու նյարդերը"] },
+      "green-energy": { name: "«Կանաչ» էներգետիկայի ինժեներ",
+        does: "Նախագծում և տեղադրում է արևային, քամու և այլ վերականգնվող էներգիայի կայաններ։ Հայաստանում տարեկան մոտ 2500 արևոտ ժամ է լինում, ուստի արևային էներգետիկան այստեղ մեծ ապագա ունի։",
+        why: "Աշխարհն անցնում է մաքուր էներգիայի, և «կանաչ» անցումը մինչև 2030 թվականը կստեղծի միլիոնավոր նոր աշխատատեղեր։",
+        subjects: ["Ֆիզիկա", "Մաթեմատիկա", "Աշխարհագրություն"],
+        skills: ["Ֆիզիկա և էլեկտրատեխնիկա", "Նախագծում", "Խնդիրների լուծում", "Բնապահպանական գիտելիք"],
+        steps: ["Հաշվիր, թե քանի արևային վահանակ կպահանջվեր քո տան համար", "Ֆիզիկայում խորացիր էլեկտրականության թեմայում", "Մասնակցիր բնապահպանական նախագծերի"] },
+      "eco-urban": { name: "Էկո-քաղաքաշինարար",
+        does: "Նախագծում է քաղաքներ, որտեղ քիչ մեքենաներ և շատ կանաչ տարածքներ կան, իսկ շենքերը խնայում են էներգիա։ Մտածում է, թե ինչպես քաղաքը հարմար դարձնել և՛ մարդկանց, և՛ բնության համար։",
+        why: "Մինչև 2050 թվականը աշխարհի բնակչության մոտ 70%-ը կապրի քաղաքներում։ Դրանք պետք է վերակառուցել, որպեսզի դիմանան շոգին, ջրհեղեղներին և աղտոտվածությանը։",
+        subjects: ["Աշխարհագրություն", "Կերպարվեստ", "Մաթեմատիկա"],
+        skills: ["Տարածական մտածողություն", "Դիզայն", "Էկոլոգիա", "Մարդկանց կարիքները լսելու ունակություն"],
+        steps: ["Քայլիր քո թաղամասով և նշիր 3 բան, որ կփոխեիր", "Նախագծիր քո երազանքի բակը՝ թղթի վրա կամ Minecraft-ում", "Հետևիր, թե ինչպես են փոխվում աշխարհի «կանաչ» քաղաքները"] },
+      "recycling": { name: "Աղբի վերամշակման տեխնոլոգ",
+        does: "Մշակում է եղանակներ, որոնց շնորհիվ աղբը դառնում է նոր հումք. պլաստիկը՝ թել, սննդի մնացորդները՝ պարարտանյութ կամ կենսագազ։ Աշխատում է գործարաններում և լաբորատորիաներում։",
+        why: "Աղբավայրերը լցվում են, իսկ հումքը թանկանում է։ «Շրջանաձև տնտեսությունը», որտեղ ոչինչ չի կորչում, դառնում է նոր նորմ։",
+        subjects: ["Քիմիա", "Կենսաբանություն", "Ֆիզիկա"],
+        skills: ["Քիմիա", "Տեխնոլոգիական գործընթացներ", "Վերլուծություն", "Նախաձեռնողականություն"],
+        steps: ["Կազմակերպիր դպրոցում թղթի կամ պլաստիկի տեսակավորում", "Քիմիայի դասին հետաքրքրվիր պոլիմերներով", "Մեկ շաբաթ հետևիր, թե որքան աղբ է առաջանում ձեր ընտանիքում"] },
+      "eco-tourism": { name: "Վիրտուալ էկո-զբոսաշրջության նախագծող",
+        does: "Ստեղծում է վիրտուալ ճամփորդություններ դեպի բնության եզակի վայրեր, որոնք դժվար կամ վտանգավոր է այցելել։ Օրինակ՝ VR արշավ Դիլիջանի անտառներով կամ ստորջրյա զբոսանք կորալային խութերում՝ առանց բնությանը վնասելու։",
+        why: "Բնության շատ վայրեր տուժում են զբոսաշրջիկների մեծ հոսքից, իսկ VR տեխնոլոգիաները թույլ են տալիս տեսնել դրանք առանց վնասելու։",
+        subjects: ["Աշխարհագրություն", "Կերպարվեստ", "Ինֆորմատիկա"],
+        skills: ["3D և VR դիզայն", "Պատմություններ պատմելու արվեստ", "Բնության իմացություն", "Նկարահանում"],
+        steps: ["Նկարահանիր 360° տեսանյութ քո սիրելի բնական վայրում (հեռախոսով էլ կարելի է)", "Սովորիր պարզ 3D մոդելավորում", "Ուսումնասիրիր Հայաստանի բնության հատուկ պահպանվող տարածքները"] },
+      "learning-path": { name: "Անհատական կրթական հետագծերի նախագծող",
+        does: "Յուրաքանչյուր աշակերտի համար կազմում է իր ուսումնական ուղին՝ հաշվի առնելով նրա հետաքրքրությունները, տեմպը և նպատակները։ ԱԲ-ի օգնությամբ պարզում է, թե որտեղ է աշակերտը դժվարանում։",
+        why: "Բոլորը տարբեր կերպ են սովորում։ Տեխնոլոգիաները վերջապես թույլ են տալիս կրթությունը հարմարեցնել յուրաքանչյուրին։",
+        subjects: ["Հասարակագիտություն", "Հայոց լեզու", "Ինֆորմատիկա"],
+        skills: ["Մանկավարժություն և հոգեբանություն", "Տվյալների վերլուծություն", "Էմպատիա", "Կազմակերպչական հմտություններ"],
+        steps: ["Օգնիր դասընկերոջդ հասկանալ դժվար թեմա և նկատիր, թե որ բացատրությունն աշխատեց", "Կազմիր քո սեփական ուսման պլանը մեկ ամսվա համար", "Կարդա, թե ինչպես է աշխատում հիշողությունը"] },
+      "vr-teacher": { name: "Վիրտուալ իրականության (VR) ուսուցիչ",
+        does: "Դասեր է անցկացնում վիրտուալ աշխարհում՝ աշակերտներին «տանելով» հին Էրեբունի, մարդու սրտի ներսը կամ Լուսնի մակերևույթ։ Ստեղծում է դասեր, որոնք հնարավոր չէ անցկացնել սովորական դասարանում։",
+        why: "Մարդիկ ավելի լավ են հիշում այն, ինչ «ապրել» են։ VR սարքերը էժանանում են և հասնում դպրոցներին։",
+        subjects: ["Պատմություն", "Ինֆորմատիկա", "Ֆիզիկա"],
+        skills: ["Մանկավարժություն", "VR և 3D գործիքներ", "Ստեղծարարություն", "Ներկայացնելու հմտություն"],
+        steps: ["Պատրաստիր ներկայացում, որի ընթացքում դասընկերներդ ինչ-որ բան կանեն, ոչ միայն կլսեն", "Փորձիր VR հավելվածներ կամ 360° տեսանյութեր", "Ընտրիր 3D-ի կամ խաղերի ուղղությունը ԹՈՒՄՈ-ում կամ նմանատիպ կենտրոնում"] },
+      "digital-wellbeing": { name: "Թվային բարեկեցության խորհրդատու",
+        does: "Օգնում է մարդկանց հավասարակշռել էկրանի առջև անցկացրած ժամանակը, պայքարել սոցիալական ցանցերից կախվածության և կիբեռբուլինգի դեմ։ Աշխատում է դպրոցներում, ընկերություններում և ընտանիքների հետ։",
+        why: "Մենք օրական ժամեր ենք անցկացնում էկրանների առջև, և դա ազդում է քնի, ուշադրության և տրամադրության վրա։",
+        subjects: ["Հասարակագիտություն", "Կենսաբանություն", "Ինֆորմատիկա"],
+        skills: ["Հոգեբանություն", "Էմպատիա", "Հաղորդակցում", "Թվային գրագիտություն"],
+        steps: ["Մեկ շաբաթ հետևիր քո էկրանային ժամանակին և վերլուծիր արդյունքը", "Դասարանում կազմակերպիր քննարկում սոցցանցերի ազդեցության մասին", "Սովորիր աջակցել ընկերոջը, որին վիրավորում են առցանց"] },
+      "edu-games": { name: "Կրթական խաղերի դիզայներ",
+        does: "Ստեղծում է խաղեր, որոնց շնորհիվ սովորելը դառնում է հետաքրքիր՝ մաթեմատիկայից մինչև լեզուներ։ Միավորում է խաղի դիզայնը, ծրագրավորումը և մանկավարժությունը։",
+        why: "Խաղային ուսուցումը արագ աճող ոլորտ է, իսկ Հայաստանի ՏՏ և խաղերի ոլորտը փնտրում է ստեղծարար մարդկանց։",
+        subjects: ["Ինֆորմատիկա", "Կերպարվեստ", "Մաթեմատիկա"],
+        skills: ["Խաղի դիզայն", "Ծրագրավորում", "Ստեղծարարություն", "Խաղացողի տեսանկյունից մտածելու ունակություն"],
+        steps: ["Ստեղծիր սեղանի խաղ որևէ դասի թեմայով", "Փորձիր Scratch կամ Roblox Studio", "Նկատիր, թե ինչու են որոշ խաղեր քեզ գրավում, իսկ մյուսները՝ ոչ"] }
+    },
+    soft: [
+      { n: "Քննադատական մտածողություն", en: "Critical thinking", d: "Փաստը կարծիքից տարբերելու, աղբյուրը ստուգելու և սեփական եզրակացություն անելու ունակություն։", t: "Ամեն նորություն կարդալիս հարցրու՝ ո՞վ է գրել, ինչո՞ւ, և որտե՞ղ է ապացույցը։" },
+      { n: "Ստեղծարարություն", en: "Creativity", d: "Նոր գաղափարներ ստեղծելու և սովորական բաներին անսովոր կերպ նայելու ունակություն։", t: "Մեկ խնդրի համար գտիր առնվազն 5 տարբեր լուծում, նույնիսկ «խենթ» թվացողները։" },
+      { n: "Էմոցիոնալ ինտելեկտ", en: "Emotional intelligence", d: "Սեփական և ուրիշների զգացմունքները հասկանալու և կառավարելու ունակություն։", t: "Վեճի ժամանակ նախ վերապատմիր դիմացինի տեսակետը, հետո նոր ասա քոնը։" },
+      { n: "Ադապտիվություն", en: "Adaptability", d: "Փոփոխություններին արագ հարմարվելու և նորը սովորելու պատրաստակամություն։", t: "Ամեն ամիս սովորիր մի նոր բան, որը քո հարմարավետության գոտուց դուրս է։" },
+      { n: "Թիմային աշխատանք", en: "Teamwork", d: "Տարբեր մարդկանց հետ ընդհանուր նպատակի համար աշխատելու ունակություն։", t: "Խմբային նախագծերում ամեն անգամ փորձիր նոր դեր՝ առաջնորդ, գաղափարների հեղինակ, ստուգող։" }
+    ],
+    hard: [
+      { n: "Թվային գրագիտություն", en: "Digital literacy", d: "Թվային գործիքներից անվտանգ և արդյունավետ օգտվելու ունակություն՝ փաստաթղթերից մինչև անձնական տվյալների պաշտպանություն։", t: "Սովորիր աշխատել աղյուսակներով և ներկայացումներով, միացրու երկքայլ ստուգումը քո հաշիվներում։" },
+      { n: "Տվյալների վերլուծություն", en: "Data analysis", d: "Թվերից իմաստ հանելու, գրաֆիկներ կարդալու և կառուցելու ունակություն։", t: "Հասարակագիտության կամ աշխարհագրության դասին վիճակագրությունը ներկայացրու գրաֆիկով։" },
+      { n: "Օտար լեզուների տիրապետում", en: "Foreign languages", d: "Անգլերենը գիտության և տեխնոլոգիաների հիմնական լեզուն է, իսկ յուրաքանչյուր նոր լեզու բացում է նոր հնարավորություններ և նոր ընկերներ։", t: "Դիտիր քեզ հետաքրքիր տեսանյութեր անգլերենով՝ անգլերեն ենթագրերով։" },
+      { n: "ԱԲ գործիքների կիրառում", en: "Using AI tools", d: "ԱԲ-ին ճիշտ հարցեր տալու, պատասխանները ստուգելու և դրանք պատասխանատու օգտագործելու ունակություն։", t: "Խնդրիր ԱԲ-ին բացատրել թեման, հետո ստուգիր դասագրքով։ Պատրաստի պատասխանն արտագրելը սովորել չէ։" }
+    ],
+    shifts: [
+      ["Տվյալների կրկնվող մուտքագրող", "Տվյալների որակի վերահսկող", "Ծրագրերն ինքնաշխատ լրացնում են աղյուսակները, իսկ մարդը գտնում է սխալները և եզրակացություններ անում։"],
+      ["Պարզ հաշվապահ", "Ֆինանսական վերլուծաբան", "Հաշվարկներն ու հաշիվ-ապրանքագրերն ավտոմատ են, իսկ մարդը խորհուրդ է տալիս՝ ինչպես խնայել և որտեղ ներդնել։"],
+      ["Զանգերի կենտրոնի օպերատոր", "Բարդ խնդիրների մասնագետ", "Պարզ հարցերին պատասխանում է չատբոտը, իսկ մարդը զբաղվում է բարդ և զգայուն դեպքերով։"],
+      ["Դրամարկղի աշխատող", "Վաճառասրահի խորհրդատու", "Ինքնասպասարկման դրամարկղերն ընդունում են վճարումը, իսկ մարդն օգնում է գնորդին ընտրություն կատարել։"],
+      ["Պարզ տեքստերի թարգմանիչ", "Թարգմանության խմբագիր", "Առաջին տարբերակը թարգմանում է մեքենան, իսկ մարդը ստուգում է իմաստը, ոճը և մշակութային նրբությունները։"]
+    ],
+    human: [
+      { n: "Էմպատիա", d: "Ուրիշի ցավն ու ուրախությունը զգալու ունակություն։ ԱԲ-ն կարող է ճանաչել տխուր դեմքը, բայց չի կարող իսկապես կարեկցել։", ex: "Բժիշկ, որը ծանր լուրը հաղորդում է մարդկայնորեն և աջակցում ընտանիքին։" },
+      { n: "Խորը ստեղծարարություն", d: "ԱԲ-ն համադրում է այն, ինչ արդեն եղել է։ Մարդը կարող է ստեղծել բոլորովին նոր բան և իմաստ դնել դրա մեջ։", ex: "Կոմիտասը, որը ժողովրդական երգերից ստեղծեց նոր երաժշտական աշխարհ։" },
+      { n: "Բարոյական որոշումներ", d: "Արժեքների մասին որոշումները պետք է կայացնեն մարդիկ և պատասխանատվություն կրեն դրանց համար։", ex: "Ո՞վ է պատասխանատու, եթե ինքնավար մեքենան վթարի է ենթարկվում։ Այս հարցին պատասխանում են մարդիկ։" },
+      { n: "Մարդկային ջերմ շփում", d: "Մարդիկ ուզում են, որ իրենց կողքին մարդ լինի, հատկապես կարևոր պահերին։", ex: "Ուսուցիչ, որը հավատում է քեզ, մարզիչ, որը ոգևորում է, բուժքույր, որը բռնում է ձեռքդ։" }
+    ],
+    tasks: [
+      { q: "Ստուգել 10 000 փաստաթուղթ և գտնել դրանցում սխալները", e: "Կրկնվող, կանոններով աշխատանքը ԱԲ-ն անում է րոպեների ընթացքում և չի հոգնում։" },
+      { q: "Մխիթարել վշտացած ընկերոջը", e: "Մխիթարությունը պահանջում է իրական հոգատարություն և վստահություն։ Մեքենան կարող է ճիշտ բառեր ասել, բայց չի զգում։" },
+      { q: "Ռենտգենյան նկարում գտնել հիվանդության նշաններ", e: "ԱԲ-ն արագ նկատում է կասկածելի հատվածները, իսկ ախտորոշումը և բուժման որոշումը կայացնում է բժիշկը։" },
+      { q: "Որոշել՝ արդա՞ր է արդյոք նոր օրենքը", e: "Արդարությունն արժեքների հարց է։ Բարոյական որոշումների պատասխանատվությունը մարդունն է։" },
+      { q: "Թարգմանել ռեստորանի ճաշացանկը", e: "Պարզ թարգմանությունը մեքենան արդեն լավ է անում։ Գրական թարգմանությանը դեռ պետք է մարդը։" },
+      { q: "Ստեղծել արվեստի բոլորովին նոր ուղղություն", e: "ԱԲ-ն սովորում է եղած օրինակներից։ Իսկապես նոր ուղղություններ բացում են մարդիկ, ովքեր համարձակվում են խախտել կանոնները։" },
+      { q: "Պլանավորել առաքման 50 մեքենաների ամենակարճ երթուղիները", e: "Հազարավոր տարբերակներ արագ համեմատելը մեքենայի ուժեղ կողմն է։" },
+      { q: "Դասարանին բացատրել նոր թեմա", e: "ԱԲ-ն կարող է յուրաքանչյուրին անհատական վարժություններ առաջարկել, իսկ ուսուցիչը ոգեշնչում է, նկատում և աջակցում։" }
+    ],
+    questions: [
+      { q: "Ի՞նչն է քեզ ավելի շատ ձգում։", o: ["Մարդկանց հետ շփումը", "Բնությունը", "Տեխնիկան և սարքերը", "Մարդու օրգանիզմը և կյանքի գաղտնիքները"] },
+      { q: "Ե՞րբ ես մոռանում ժամանակի մասին։", o: ["Երբ նկարում, գրում, երաժշտություն կամ տեսանյութ եմ ստեղծում", "Երբ ինչ-որ բան հավաքում, վերանորոգում կամ ծրագրավորում եմ", "Երբ զրուցում եմ ընկերներիս հետ կամ օգնում ինչ-որ մեկին", "Երբ լուծում եմ գլուխկոտրուկներ և տրամաբանական խնդիրներ"] },
+      { q: "Ազատ շաբաթ օր է։ Ի՞նչ կընտրես։", o: ["Արշավ դեպի սարեր կամ անտառ", "Կփորձեմ ինքս խաղ, կայք կամ ռոբոտ սարքել", "Կդիտեմ ֆիլմ մարդու ուղեղի կամ տիեզերքի մասին", "Կհանդիպեմ ընկերներիս, կօգնեմ ինչ-որ մեկին"] },
+      { q: "Ի՞նչ են ընկերներդ ամենից հաճախ ասում քո մասին։", o: ["«Նրա հետ միշտ կարելի է խոսել, նա կհասկանա»", "«Նրա գլխում միշտ նոր գաղափարներ են»", "«Ցանկացած սարք կվերանորոգի»", "«Նա ամեն ինչ մանրամասն ստուգում է»"] },
+      { q: "Ո՞ր առարկաներն են քեզ ավելի հետաքրքիր։", o: ["Մաթեմատիկա և ինֆորմատիկա", "Կենսաբանություն և քիմիա", "Աշխարհագրություն և բնագիտություն", "Գրականություն, պատմություն և կերպարվեստ"] },
+      { q: "Դասարանով նախագիծ եք անում։ Ո՞րն է քո դերը։", o: ["Առաջարկում եմ գաղափարներ և մտածում, թե ինչ տեսք կունենա", "Հավաքում եմ տվյալներ, ստուգում փաստերն ու հաշվարկները", "Կազմակերպում եմ թիմը, որ բոլորը մասնակցեն", "Պատրաստում եմ տեխնիկական մասը՝ մոդել, սարք կամ ծրագիր"] },
+      { q: "Եթե լինեիր ֆիլմի հերոս, ո՞վ կլինեիր։", o: ["Գյուտարար, որը սարքում է անհավանական մեքենաներ", "Դետեկտիվ, որը մանրուքներից գտնում է ճշմարտությունը", "Բժիշկ, որը փրկում է մարդկանց կյանքեր", "Ճանապարհորդ, որը բացահայտում է անհայտ վայրեր"] },
+      { q: "Որտե՞ղ կցանկանայիր աշխատել։", o: ["Բաց երկնքի տակ՝ դաշտում, սարերում կամ անտառում", "Լաբորատորիայում կամ հիվանդանոցում", "Ժամանակակից գրասենյակում կամ տանից՝ համակարգչի առջև", "Մարդկանց մեջ՝ դպրոցում կամ համայնքային կենտրոնում"] },
+      { q: "Ո՞ր խնդիրը կցանկանայիր լուծել աշխարհում։", o: ["Որ մարդիկ ավելի երկար և առողջ ապրեն", "Մաքուր օդ, ջուր և էներգիա բոլորի համար", "Անվտանգ և արդար համացանց", "Որ յուրաքանչյուր երեխա ստանա իրեն հարմար կրթություն"] },
+      { q: "Ինչպե՞ս ես սովորաբար լուծում բարդ խնդիրը։", o: ["Կազմում եմ մանրամասն պլան և հաշվարկում", "Փնտրում եմ անսովոր, ոչ ստանդարտ լուծում", "Քննարկում եմ ուրիշների հետ", "Միանգամից փորձում եմ գործնականում և սովորում սխալներից"] },
+      { q: "Ո՞ր դպրոցական նախագծին կմասնակցեիր ամենամեծ հաճույքով։", o: ["Ռոբոտ, որը տարեցներին հիշեցնում է դեղ ընդունելու մասին", "Դպրոցի բակի կանաչապատում", "Կարճամետրաժ ֆիլմ կամ խաղ մեր դասարանի մասին", "Հետազոտություն՝ ինչպես է քունն ազդում աշակերտների գնահատականների վրա"] },
+      { q: "Ի՞նչն է քեզ համար ամենակարևորը ապագա աշխատանքում։", o: ["Օգնել մարդկանց և զգալ, որ պետք եմ", "Ստեղծել նոր և գեղեցիկ բաներ", "Հասկանալ, թե ինչպես է կառուցված աշխարհը", "Ավելի մաքուր մոլորակ թողնել հաջորդ սերունդներին"] }
+    ],
+    archetypes: {
+      T: { name: "Կառուցող", short: "Սիրում ես հասկանալ, թե ինչպես են աշխատում բաները, և սարքել դրանք։",
+        desc: "Քեզ հետաքրքրում է, թե ինչպես են աշխատում բաները, և սիրում ես դրանք ստեղծել սեփական ձեռքերով։ Դու մտածում ես գործողություններով. ավելի լավ է մեկ անգամ փորձել, քան տասն անգամ լսել։",
+        strengths: ["Գործնական միտք", "Տեխնիկական հմտություններ", "Համառություն"],
+        shine: "Այնտեղ, որտեղ կարելի է ստեղծել իրական բան՝ սարք, ծրագիր կամ կառույց։",
+        grow: "Սովորիր բացատրել քո գաղափարները ուրիշներին. նույնիսկ լավագույն սարքը պետք է կարողանալ ներկայացնել։" },
+      H: { name: "Կյանքի հետազոտող", short: "Քեզ հուզում են մարդու օրգանիզմի և կյանքի գաղտնիքները։",
+        desc: "Քեզ հետաքրքրում է, թե ինչպես է աշխատում մարդու օրգանիզմը, ինչու ենք հիվանդանում և ինչպես բուժվել։ Դու համբերատար ես և վստահում ես փաստերին։",
+        strengths: ["Հետաքրքրասիրություն", "Ուշադրություն մանրուքների նկատմամբ", "Պատասխանատվություն"],
+        shine: "Լաբորատորիայում, հիվանդանոցում և այնտեղ, որտեղ գիտությունը փրկում է կյանքեր։",
+        grow: "Մի մոռացիր, որ գիտության ետևում մարդիկ են. զարգացրու շփվելու և բացատրելու հմտություններդ։" },
+      N: { name: "Բնության պահապան", short: "Բնությունը քեզ ուժ է տալիս, և ուզում ես պահպանել այն։",
+        desc: "Բնությունը քեզ լիցքավորում է, և դու նկատում ես այն, ինչ ուրիշները չեն տեսնում՝ աղտոտված գետը, չորացած ծառը։ Քեզ համար կարևոր է, թե ինչ մոլորակ կթողնենք հաջորդ սերունդներին։",
+        strengths: ["Դիտողականություն", "Պատասխանատվություն", "Երկարաժամկետ մտածողություն"],
+        shine: "Բաց երկնքի տակ և նախագծերում, որոնք մաքուր են դարձնում օդը, ջուրը և քաղաքները։",
+        grow: "Լավ գաղափարը պետք է ապացուցել թվերով. խորացիր ֆիզիկայում, քիմիայում և մաթեմատիկայում։" },
+      P: { name: "Միավորող", short: "Լավ ես զգում մարդկանց և գիտես, թե ինչպես նրանց օգնել։",
+        desc: "Դու լավ ես զգում մարդկանց և գիտես, թե ինչպես նրանց միավորել։ Ընկերներդ գալիս են քեզ մոտ, երբ խնդիր ունեն, որովհետև քեզ վստահում են։",
+        strengths: ["Էմպատիա", "Հաղորդակցում", "Թիմ ստեղծելու ունակություն"],
+        shine: "Այնտեղ, որտեղ աշխատում են մարդկանց համար և մարդկանց հետ՝ կրթության, բժշկության և սոցիալական ոլորտում։",
+        grow: "Սովորիր նաև «ոչ» ասել և հոգ տանել քո մասին. օգնողն էլ հանգստի կարիք ունի։" },
+      C: { name: "Ստեղծագործող", short: "Քո գլխում միշտ նոր գաղափարներ են։",
+        desc: "Քո գլխում միշտ նոր գաղափարներ են, և դու ձանձրանում ես, երբ ամեն ինչ արվում է նույն ձևով։ Դու հնարավորություններ ես տեսնում այնտեղ, որտեղ ուրիշները տեսնում են սովորական բաներ։",
+        strengths: ["Երևակայություն", "Ոչ ստանդարտ մտածողություն", "Ինքնաարտահայտում"],
+        shine: "Դիզայնում, մեդիայում, խաղերում և ամենուր, որտեղ նոր լուծում է պետք։",
+        grow: "Գաղափարը կյանքի կոչելու համար պետք է կարգապահություն. սովորիր ավարտին հասցնել սկսածդ։" },
+      A: { name: "Վերլուծաբան", short: "Սիրում ես ամեն ինչ ստուգել և հասնել ճշմարտությանը։",
+        desc: "Դու չես հավատում առաջին իսկ պատասխանին և սիրում ես ամեն ինչ ստուգել։ Թվերը, տրամաբանությունը և ապացույցները քեզ համար հասկանալի լեզու են։",
+        strengths: ["Տրամաբանություն", "Քննադատական մտածողություն", "Ճշգրտություն"],
+        shine: "Տվյալների, գիտական հետազոտությունների, ֆինանսների և անվտանգության ոլորտներում։",
+        grow: "Երբեմն վստահիր նաև ներքին զգացողությանդ և մի վախեցիր սխալվելուց. ամեն ինչ հնարավոր չէ նախապես հաշվարկել։" }
+    },
+    stages: [
+      { when: "7–9-րդ դասարաններ", h: "Փորձիր տարբեր բաներ", tips: [
+        ["Մասնակցիր խմբակների", "Ռոբոտաշինություն, թատրոն, սպորտ, ծրագրավորում, նկարչություն։ ԹՈՒՄՈ-ն, «Արմաթ» ինժեներական լաբորատորիաները և դպրոցական խմբակները լավ սկիզբ են։ Որքան շատ բան փորձես, այնքան լավ կհասկանաս, թե ինչն է քեզ ոգևորում։"],
+        ["Կարդա ամեն օր", "Օրական 20 րոպե ընթերցանություն, ոչ միայն դասագիրք։ Ընթերցանությունը զարգացնում է մտածողությունը, խոսքը և ուշադրությունը։"],
+        ["Սովորիր լեզուներ", "Անգլերենը բացում է աշխարհի գիտելիքների մեծ մասը։ Երկրորդ օտար լեզուն հավելյալ առավելություն է։"] ] },
+      { when: "10–12-րդ դասարաններ", h: "Խորացիր և ստեղծիր", tips: [
+        ["Ընտրիր 1–2 ուղղություն", "Խորացիր այն առարկաներում, որոնք կապված են քեզ հետաքրքրող մասնագիտության հետ, բայց մի փակիր մյուս դռները։"],
+        ["Ստեղծիր քո պորտֆոլիոն", "Փոքր կայք, հետազոտություն, տեսանյութ, կամավորական նախաձեռնություն։ Իրական նախագծերն ավելի լավ են ցույց տալիս, թե ինչ կարող ես անել, քան գնահատականները։"],
+        ["Խոսիր մասնագետների հետ", "Հարցրու ծնողներիդ ծանոթներին, թե ինչպես է անցնում նրանց աշխատանքային օրը։ Փորձիր մեկ օր անցկացնել մասնագետի կողքին։"],
+        ["Մասնակցիր մրցույթների", "Օլիմպիադաներ, հաքաթոններ, նախագծերի մրցույթներ։ Դրանք սովորեցնում են աշխատել ճնշման տակ և թիմով։"] ] },
+      { when: "Միշտ", h: "Միշտ հիշիր", tips: [
+        ["ԱԲ-ն քո ուսուցիչն է, ոչ թե պատրաստի պատասխանների աղբյուր", "Խնդրիր ԱԲ-ին բացատրել, քեզ հարցեր տալ և ստուգել քո աշխատանքը։ Եթե պարզապես արտագրում ես, չես սովորում։"],
+        ["Ստուգիր աղբյուրները", "Համացանցում կա և՛ ճշմարտություն, և՛ կեղծիք։ Միշտ փնտրիր տեղեկությունը առնվազն երկու վստահելի աղբյուրում։"],
+        ["Մի վախեցիր սխալվելուց", "Ապագայում մարդիկ կյանքի ընթացքում մի քանի անգամ կփոխեն մասնագիտությունը։ Ուղղությունը փոխելը պարտություն չէ, այլ ադապտիվություն։"],
+        ["Հոգ տար քեզ", "Քուն, շարժում և ընկերներ։ Հանգստացած ուղեղն ավելի լավ է սովորում և ստեղծում։"] ] }
+    ]
+  };
+
+  /* =====================================================================
+     English
+     ===================================================================== */
+  const EN = {
+    ui: {
+      docTitle: "The Future of Work",
+      brand: "The Future of Work",
+      navAria: "Sections",
+      letters: ["A", "B", "C", "D", "E"],
+      optLetters: ["A", "B", "C", "D"],
+      nav: ["Professions", "Skills", "AI & automation", "Quiz", "Tips"],
+      viewNames: { home: "Home", professions: "A. Professions", skills: "B. Skills", ai: "C. AI & automation", test: "D. Quiz", tips: "E. Tips" },
+      pagerAria: "Between sections",
+      backHome: "Back to the start",
+      and: "and",
+
+      eyebrow: "Social studies · The future of work",
+      h1: "What work will be waiting for you?",
+      lead: "Hi! This site is your guide to the job market of the future. Find out which professions will be in demand, which skills you will need, and how to start preparing today.",
+      cta1: "Take the quiz",
+      cta2: "Explore professions",
+      ageLabel: "How old are you?",
+      startWork: "You will start working around",
+      yearText: n => "That gives you " + n + " years to prepare. By then, the world will already look different.",
+      ageNote: "This assumes you start working at about 22, after finishing your studies.",
+      stats: [
+        ["170M", "new jobs will be created worldwide by 2030"],
+        ["92M", "jobs will disappear because of automation and other changes"],
+        ["39%", "of today's job skills will change or become outdated by 2030"]
+      ],
+      source: "Source: World Economic Forum, Future of Jobs Report 2025. Overall, the world will gain about 78 million jobs, but many people will have to learn new skills.",
+      menuTitle: "Choose a section",
+      menu: [
+        ["Professions of the future", "16 professions in 4 fields"],
+        ["Skills you will need", "Soft and hard skills for the 21st century"],
+        ["AI & automation", "What will change, what stays human, and a game for the class"],
+        ["Quiz: “What is your future profession?”", "12 questions, your type, your strengths and the professions that suit you"],
+        ["Tips for students", "What to do now, in high school and always"]
+      ],
+
+      profTitle: "Professions of the future",
+      profIntro: "Many jobs that will be ordinary in ten years still sound new today. Pick a field and take a look.",
+      fieldsAria: "Fields",
+      whyLabel: "Why it's in demand:",
+      subjLabel: "Helpful school subjects:",
+
+      skillsTitle: "Skills for the 21st century",
+      skillsIntro: "Technical knowledge alone is not enough. Employers look for people who can think, work with others and learn quickly.",
+      tBar: "Soft skills", tBarSmall: "breadth: work well in any team",
+      tStem: "Hard skills", tStemSmall: "depth in one field",
+      tText: "The professional of the future is often compared to the letter <b>T</b>. The vertical line is deep knowledge in one field: hard skills you can measure and test. The horizontal line is soft skills: they let you work with all kinds of people, adapt to change and keep learning.",
+      callout: "7 out of 10 employers name <b>analytical thinking</b> as the most important skill. Demand is growing fastest for skills in AI, data and cybersecurity.",
+      softTitle: "Soft skills", softSub: "How you think, communicate and work with others.",
+      hardTitle: "Hard skills", hardSub: "Specific knowledge and tools you can learn.",
+      practice: "How to practice:",
+
+      aiTitle: "Artificial intelligence (AI) and automation",
+      aiIntro: "Will robots take our jobs? There is no simple answer: some jobs will disappear, many will change, and some will always belong to people.",
+      shiftTitle: "Which jobs will change?",
+      shiftHead: ["Today", "Tomorrow", "What changes"],
+      principle: "Machines take over repetitive tasks that follow the same rules every time. The job often stays, but what it involves changes: people keep the parts that need judgment, creativity and human contact.",
+      humanTitle: "What can robots not replace?",
+      gameTitle: "Game: human, AI or both?",
+      gameIntro: "Who do you think would do each task best? Pick an answer to see the explanation, then discuss it as a class.",
+      score: (c, a) => "Correct: " + c + " / " + a,
+      reset: "Start over",
+      labels: { ai: "AI", human: "Human", both: "Both" },
+      right: "Correct!",
+      wrong: l => "Not quite. The answer is: " + l + ".",
+
+      testTitle: "Quiz: “What is your future profession?”",
+      testIntro: "Answer 12 questions. There are no right or wrong answers, so pick the one that feels most like you. At the end you will see your type, your strengths and the professions that suit you.",
+      qOf: (i, n) => "Question " + i + " of " + n,
+      back: "← Previous question",
+      result: "Result",
+      yourType: "Your type",
+      second: (n, s) => "You also show traits of <b>" + n + "</b>. " + s,
+      strengthsT: "Your strengths",
+      shineT: "Where you will shine",
+      growT: "What to work on",
+      profileT: "Your interest profile",
+      matchEyebrow: "Based on your answers, a great fit for you is",
+      traitsLine: l => "Your answers show strong interest in " + l + ". That is exactly what this profession needs.",
+      needSkills: "Skills you'll need",
+      startNow: "Where to start right now",
+      alsoFit: "These could also suit you",
+      disclaimer: "This is a game, not a verdict. Interests change as you grow, and that's normal. Try different fields and talk to people who work in them.",
+      retry: "Take the quiz again",
+      allProfs: "All professions",
+
+      tipsTitle: "Tips for students",
+      tipsIntro: "Preparing for the future starts now, not at university. Here is what you can do at each stage of school.",
+      closing: "Your future profession may not even have a name yet. But the skills you build today will stay with you in any job.",
+      foot1: 'Sources: <a href="https://www.weforum.org/publications/the-future-of-jobs-report-2025/" target="_blank" rel="noopener">World Economic Forum, Future of Jobs Report 2025</a>; UN World Urbanization Prospects.',
+      foot2: "Made for a social studies class."
+    },
+    fields: { tech: "Technology & AI", bio: "Medicine & biotech", eco: "Environment & energy", edu: "Education & social work" },
+    traits: { T: "Technology", H: "Life science", N: "Nature", P: "People", C: "Creativity", A: "Analysis" },
+    profs: {
+      "ai-ethics": { name: "AI Ethics Specialist",
+        does: "Makes sure AI systems are fair, safe and transparent. For example, that a hiring algorithm does not discriminate against people because of their gender or ethnicity.",
+        why: "The more decisions machines make, the more we need people who ask: “But is this fair?”",
+        subjects: ["Social studies", "Computer science", "Literature"],
+        skills: ["Critical thinking", "Ethics and law", "How AI works", "Debating"],
+        steps: ["Join a debate club", "Try to catch an AI chatbot giving a wrong or biased answer", "Follow the news about AI and the law"] },
+      "prompt": { name: "AI Prompt Engineer",
+        does: "Knows how to “talk” to AI to get accurate, useful results. Builds AI-powered tools for companies, from texts to images and code.",
+        why: "AI tools are everywhere, but the result depends on how well a person describes the task.",
+        subjects: ["Computer science", "Armenian", "English"],
+        skills: ["Clear writing", "Logical thinking", "Knowledge of AI tools", "Creativity"],
+        steps: ["Ask an AI the same question in 3 different ways and compare the answers", "Learn programming basics, for example Python", "Practice writing clearly and briefly"] },
+      "cyber": { name: "Cybersecurity Expert",
+        does: "Protects banks, hospitals, government systems and ordinary people from hacker attacks. Finds the weak spots in a system before criminals do.",
+        why: "Everything is moving online, and cyberattacks keep getting more sophisticated. The world has a big shortage of these specialists.",
+        subjects: ["Computer science", "Math", "Physics"],
+        skills: ["Networks and systems", "Analytical thinking", "Attention to detail", "Ethics"],
+        steps: ["Protect your own accounts with strong passwords and two-step verification", "Take part in CTF (Capture the Flag) competitions for students", "Learn how the internet works"] },
+      "data": { name: "Data Scientist",
+        does: "Finds patterns in huge amounts of data and makes predictions. For example, where to put a new bus stop, when flu season will start, or what music to recommend to you.",
+        why: "Data and AI specialists are among the fastest-growing jobs in the world.",
+        subjects: ["Math", "Computer science", "English"],
+        skills: ["Statistics", "Programming", "Showing data in charts", "Curiosity"],
+        steps: ["Collect data about your class (for example, hours of sleep) and make a chart", "Learn to work with spreadsheets (Excel, Google Sheets)", "Pay special attention to probability in math"] },
+      "genetic": { name: "Genetic Modeler",
+        does: "Uses computer models to study DNA and predict which diseases a person may be prone to. Helps create medicines tailored to a specific person's genes.",
+        why: "Medicine is becoming personal: from “one medicine for everyone” to “your medicine, made for you”.",
+        subjects: ["Biology", "Chemistry", "Math"],
+        skills: ["Deep knowledge of biology", "Data analysis", "Programming", "Patience"],
+        steps: ["Go deeper into genetics in biology", "Take part in a biology olympiad", "Try programming to process scientific data"] },
+      "robo-surgery": { name: "Robotic Surgery Operator",
+        does: "Controls surgical robots that operate with millimeter precision. Works with a team of doctors and makes sure the robot works flawlessly.",
+        why: "Robotic surgery means smaller incisions and faster recovery, and the number of these operations grows every year.",
+        subjects: ["Biology", "Physics", "Computer science"],
+        skills: ["Anatomy", "Precise hand movements", "Staying calm under stress", "Teamwork"],
+        steps: ["Train your hand precision with model making or a musical instrument", "Join a robotics club", "Read about human anatomy"] },
+      "telemed": { name: "Telemedicine Specialist",
+        does: "Gives medical advice remotely, through video calls and smart devices. Especially important in villages and remote areas where there is no doctor.",
+        why: "Smartwatches and sensors already measure heart rate, blood pressure and sleep. We need specialists who can understand that data and help people.",
+        subjects: ["Biology", "Computer science", "Armenian"],
+        skills: ["Medical knowledge", "Communication", "Empathy", "Digital tools"],
+        steps: ["Learn first aid", "Volunteer with the Red Cross or a health project", "Practice explaining complex things in simple words"] },
+      "bionic": { name: "Bionic Prosthetics Engineer",
+        does: "Creates artificial arms and legs controlled by signals from muscles or nerves. Combines medicine, robotics and 3D printing.",
+        why: "3D printers and sensors are getting cheaper, so bionic prostheses are becoming affordable for thousands of people.",
+        subjects: ["Physics", "Biology", "Math"],
+        skills: ["Mechanics and electronics", "Anatomy", "3D modeling", "Empathy"],
+        steps: ["Try 3D modeling, for example in Tinkercad", "Build a simple robot with Arduino", "Learn how muscles and nerves work"] },
+      "green-energy": { name: "Renewable Energy Engineer",
+        does: "Designs and installs solar, wind and other renewable power plants. Armenia gets about 2,500 hours of sunshine a year, so solar power has a big future here.",
+        why: "The world is switching to clean energy, and this green transition will create millions of new jobs by 2030.",
+        subjects: ["Physics", "Math", "Geography"],
+        skills: ["Physics and electrical engineering", "Design", "Problem solving", "Environmental knowledge"],
+        steps: ["Work out how many solar panels your home would need", "Go deeper into electricity in physics", "Take part in environmental projects"] },
+      "eco-urban": { name: "Eco Urban Planner",
+        does: "Designs cities with fewer cars, more green space and buildings that save energy. Thinks about how to make a city work for both people and nature.",
+        why: "By 2050, about 70% of the world's population will live in cities. They need to be rebuilt to cope with heat, floods and pollution.",
+        subjects: ["Geography", "Art", "Math"],
+        skills: ["Spatial thinking", "Design", "Ecology", "Listening to what people need"],
+        steps: ["Walk around your neighborhood and note 3 things you would change", "Design your dream courtyard on paper or in Minecraft", "Follow how green cities around the world are changing"] },
+      "recycling": { name: "Recycling Technologist",
+        does: "Develops ways to turn waste into new raw materials: plastic into fiber, food scraps into compost or biogas. Works in factories and labs.",
+        why: "Landfills are filling up and raw materials are getting more expensive. The circular economy, where nothing goes to waste, is becoming the new normal.",
+        subjects: ["Chemistry", "Biology", "Physics"],
+        skills: ["Chemistry", "Industrial processes", "Analysis", "Initiative"],
+        steps: ["Organize paper or plastic sorting at your school", "Look into polymers in chemistry", "For one week, track how much waste your family produces"] },
+      "eco-tourism": { name: "Virtual Eco-Tourism Designer",
+        does: "Creates virtual trips to unique natural places that are hard or dangerous to visit. For example, a VR hike through the forests of Dilijan or an underwater walk on a coral reef, without harming nature.",
+        why: "Many natural sites suffer from too many tourists, and VR lets people see them without causing damage.",
+        subjects: ["Geography", "Art", "Computer science"],
+        skills: ["3D and VR design", "Storytelling", "Knowledge of nature", "Filming"],
+        steps: ["Film a 360° video of your favorite place in nature (a phone works too)", "Learn simple 3D modeling", "Explore Armenia's protected natural areas"] },
+      "learning-path": { name: "Personal Learning Path Designer",
+        does: "Builds a learning path for each student based on their interests, pace and goals. Uses AI to see where a student is struggling.",
+        why: "Everyone learns differently. Technology finally makes it possible to tailor education to each person.",
+        subjects: ["Social studies", "Armenian", "Computer science"],
+        skills: ["Teaching and psychology", "Data analysis", "Empathy", "Organization"],
+        steps: ["Help a classmate understand a hard topic and notice which explanation worked", "Make your own study plan for one month", "Read about how memory works"] },
+      "vr-teacher": { name: "Virtual Reality (VR) Teacher",
+        does: "Teaches lessons in virtual reality, “taking” students to ancient Erebuni, inside the human heart or onto the surface of the Moon. Creates lessons that are impossible in an ordinary classroom.",
+        why: "People remember what they have “lived through” much better. VR headsets are getting cheaper and reaching schools.",
+        subjects: ["History", "Computer science", "Physics"],
+        skills: ["Teaching", "VR and 3D tools", "Creativity", "Presenting"],
+        steps: ["Prepare a presentation where your classmates do something, not just listen", "Try VR apps or 360° videos", "Choose a 3D or game design track at TUMO or a similar center"] },
+      "digital-wellbeing": { name: "Digital Wellbeing Coach",
+        does: "Helps people balance their screen time and deal with social media addiction and cyberbullying. Works in schools and companies, and with families.",
+        why: "We spend hours a day in front of screens, and it affects our sleep, attention and mood.",
+        subjects: ["Social studies", "Biology", "Computer science"],
+        skills: ["Psychology", "Empathy", "Communication", "Digital literacy"],
+        steps: ["Track your screen time for a week and look at the results", "Organize a class discussion about how social media affects us", "Learn how to support a friend who is being bullied online"] },
+      "edu-games": { name: "Educational Game Designer",
+        does: "Creates games that make learning fun, from math to languages. Combines game design, programming and teaching.",
+        why: "Game-based learning is a fast-growing field, and Armenia's IT and game industry is looking for creative people.",
+        subjects: ["Computer science", "Art", "Math"],
+        skills: ["Game design", "Programming", "Creativity", "Thinking like a player"],
+        steps: ["Create a board game about a topic from one of your classes", "Try Scratch or Roblox Studio", "Notice why some games pull you in and others don't"] }
+    },
+    soft: [
+      { n: "Critical thinking", en: "Քննադատական մտածողություն", d: "The ability to tell facts from opinions, check sources and reach your own conclusions.", t: "Whenever you read a news story, ask: who wrote it, why, and where is the evidence?" },
+      { n: "Creativity", en: "Ստեղծարարություն", d: "The ability to come up with new ideas and look at ordinary things in unusual ways.", t: "Find at least 5 different solutions to one problem, even the ones that seem “crazy”." },
+      { n: "Emotional intelligence", en: "Էմոցիոնալ ինտելեկտ", d: "The ability to understand and manage your own feelings and other people's.", t: "In an argument, first retell the other person's point of view, and only then give yours." },
+      { n: "Adaptability", en: "Ադապտիվություն", d: "Being ready to adjust quickly to change and to learn new things.", t: "Every month, learn something new that is outside your comfort zone." },
+      { n: "Teamwork", en: "Թիմային աշխատանք", d: "The ability to work with different people toward a shared goal.", t: "In group projects, try a new role each time: leader, ideas person, checker." }
+    ],
+    hard: [
+      { n: "Digital literacy", en: "Թվային գրագիտություն", d: "Using digital tools safely and effectively, from documents to protecting your personal data.", t: "Learn to work with spreadsheets and presentations, and turn on two-step verification for your accounts." },
+      { n: "Data analysis", en: "Տվյալների վերլուծություն", d: "Making sense of numbers, and reading and building charts.", t: "In social studies or geography, present statistics as a chart." },
+      { n: "Foreign languages", en: "Օտար լեզուներ", d: "English is the main language of science and technology, and every new language opens up new opportunities and new friendships.", t: "Watch videos you enjoy in English, with English subtitles." },
+      { n: "Using AI tools", en: "ԱԲ գործիքների կիրառում", d: "Asking AI the right questions, checking its answers and using them responsibly.", t: "Ask AI to explain a topic, then check it against your textbook. Copying a ready-made answer is not learning." }
+    ],
+    shifts: [
+      ["Data entry clerk", "Data quality controller", "Software fills in spreadsheets automatically, and a person finds the errors and draws conclusions."],
+      ["Basic bookkeeper", "Financial analyst", "Calculations and invoices are automated, and a person advises on how to save and where to invest."],
+      ["Call center operator", "Complex case specialist", "A chatbot answers simple questions, and a person handles difficult and sensitive cases."],
+      ["Cashier", "Sales floor advisor", "Self-checkouts take the payment, and a person helps customers choose."],
+      ["Translator of simple texts", "Translation editor", "A machine makes the first draft, and a person checks the meaning, style and cultural nuances."]
+    ],
+    human: [
+      { n: "Empathy", d: "The ability to feel another person's pain and joy. AI can recognize a sad face, but it cannot truly care.", ex: "A doctor who delivers hard news with kindness and supports the family." },
+      { n: "Deep creativity", d: "AI recombines what already exists. People can create something completely new and give it meaning.", ex: "Komitas, who turned Armenian folk songs into a whole new musical world." },
+      { n: "Moral decisions", d: "Decisions about values must be made by people, who take responsibility for them.", ex: "Who is responsible when a self-driving car crashes? People have to answer that question." },
+      { n: "Warm human contact", d: "People want a person by their side, especially at important moments.", ex: "A teacher who believes in you, a coach who inspires you, a nurse who holds your hand." }
+    ],
+    tasks: [
+      { q: "Check 10,000 documents and find the errors in them", e: "AI does repetitive, rule-based work in minutes and never gets tired." },
+      { q: "Comfort a friend who is grieving", e: "Comfort takes real care and trust. A machine can say the right words, but it does not feel anything." },
+      { q: "Spot signs of disease on an X-ray", e: "AI quickly flags suspicious areas, and the doctor makes the diagnosis and decides on treatment." },
+      { q: "Decide whether a new law is fair", e: "Fairness is a question of values. Responsibility for moral decisions belongs to people." },
+      { q: "Translate a restaurant menu", e: "Machines already handle simple translation well. Literary translation still needs a person." },
+      { q: "Start a completely new art movement", e: "AI learns from existing examples. Truly new directions come from people who dare to break the rules." },
+      { q: "Plan the shortest routes for 50 delivery trucks", e: "Comparing thousands of options quickly is what machines do best." },
+      { q: "Teach the class a new topic", e: "AI can give each student personal exercises, while the teacher inspires, notices and supports." }
+    ],
+    questions: [
+      { q: "What attracts you the most?", o: ["Being with people", "Nature", "Technology and gadgets", "The human body and the secrets of life"] },
+      { q: "When do you lose track of time?", o: ["When I draw, write, make music or create videos", "When I build, fix or program something", "When I chat with friends or help someone", "When I solve puzzles and logic problems"] },
+      { q: "It's a free Saturday. What do you choose?", o: ["A hike in the mountains or the forest", "Trying to build my own game, website or robot", "Watching a film about the human brain or space", "Meeting friends and helping someone out"] },
+      { q: "What do your friends say about you most often?", o: ["“You can always talk to them, they'll understand”", "“Their head is always full of new ideas”", "“They can fix any gadget”", "“They check everything in detail”"] },
+      { q: "Which subjects do you find most interesting?", o: ["Math and computer science", "Biology and chemistry", "Geography and natural science", "Literature, history and art"] },
+      { q: "Your class is doing a project. What's your role?", o: ["I come up with ideas and think about how it will look", "I collect data and check the facts and calculations", "I organize the team so everyone takes part", "I make the technical part: a model, a device or a program"] },
+      { q: "If you were the hero of a film, who would you be?", o: ["An inventor who builds incredible machines", "A detective who finds the truth in small details", "A doctor who saves people's lives", "A traveler who discovers unknown places"] },
+      { q: "Where would you like to work?", o: ["Outdoors: in fields, mountains or forests", "In a lab or a hospital", "In a modern office or from home, at a computer", "Among people: at a school or a community center"] },
+      { q: "Which problem in the world would you like to solve?", o: ["Helping people live longer, healthier lives", "Clean air, water and energy for everyone", "A safe and fair internet", "The right kind of education for every child"] },
+      { q: "How do you usually solve a hard problem?", o: ["I make a detailed plan and do the math", "I look for an unusual, creative solution", "I talk it through with others", "I jump straight in and learn from my mistakes"] },
+      { q: "Which school project would you enjoy most?", o: ["A robot that reminds elderly people to take their medicine", "Planting greenery in the schoolyard", "A short film or game about our class", "Research on how sleep affects students' grades"] },
+      { q: "What matters most to you in a future job?", o: ["Helping people and feeling needed", "Creating new and beautiful things", "Understanding how the world works", "Leaving a cleaner planet for future generations"] }
+    ],
+    archetypes: {
+      T: { name: "The Builder", short: "You love figuring out how things work and making them yourself.",
+        desc: "You want to know how things work, and you love building them with your own hands. You think by doing: trying something once beats hearing about it ten times.",
+        strengths: ["A practical mind", "Technical skills", "Persistence"],
+        shine: "Wherever you can make something real: a device, a program or a structure.",
+        grow: "Learn to explain your ideas to others. Even the best invention needs to be presented well." },
+      H: { name: "The Life Explorer", short: "You are fascinated by the human body and the secrets of life.",
+        desc: "You want to know how the human body works, why we get sick and how we heal. You are patient and you trust facts.",
+        strengths: ["Curiosity", "Attention to detail", "Responsibility"],
+        shine: "In labs, in hospitals and anywhere science saves lives.",
+        grow: "Don't forget that there are people behind the science. Build your skills in talking to people and explaining things." },
+      N: { name: "The Nature Guardian", short: "Nature gives you energy, and you want to protect it.",
+        desc: "Nature recharges you, and you notice what others miss: a polluted river, a dried-up tree. You care about what kind of planet we leave for the next generations.",
+        strengths: ["Observation", "Responsibility", "Long-term thinking"],
+        shine: "Outdoors, and in projects that make air, water and cities cleaner.",
+        grow: "A good idea needs numbers to prove it. Go deeper into physics, chemistry and math." },
+      P: { name: "The Connector", short: "You understand people and know how to help them.",
+        desc: "You read people well and know how to bring them together. Friends come to you with their problems because they trust you.",
+        strengths: ["Empathy", "Communication", "Team building"],
+        shine: "Wherever people work for and with other people: education, medicine and social work.",
+        grow: "Learn to say “no” too, and take care of yourself. Helpers need rest as well." },
+      C: { name: "The Creator", short: "Your head is always full of new ideas.",
+        desc: "Your head is always full of new ideas, and you get bored when everything is done the same way. You see possibilities where others see ordinary things.",
+        strengths: ["Imagination", "Original thinking", "Self-expression"],
+        shine: "In design, media, games and anywhere a fresh solution is needed.",
+        grow: "Bringing ideas to life takes discipline. Practice finishing what you start." },
+      A: { name: "The Analyst", short: "You like to check everything and get to the truth.",
+        desc: "You don't trust the first answer you hear, and you like to check everything. Numbers, logic and evidence are a language you understand.",
+        strengths: ["Logic", "Critical thinking", "Precision"],
+        shine: "In data, scientific research, finance and security.",
+        grow: "Sometimes trust your gut too, and don't be afraid of mistakes. Not everything can be calculated in advance." }
+    },
+    stages: [
+      { when: "Grades 7–9", h: "Try lots of things", tips: [
+        ["Join clubs", "Robotics, theater, sports, programming, art. TUMO, the Armath engineering labs and school clubs are a great start. The more you try, the better you'll understand what excites you."],
+        ["Read every day", "20 minutes a day, and not only textbooks. Reading builds your thinking, your language and your focus."],
+        ["Learn languages", "English opens up most of the world's knowledge. A second foreign language is a bonus."] ] },
+      { when: "Grades 10–12", h: "Go deeper and create", tips: [
+        ["Choose 1–2 directions", "Go deeper into the subjects linked to the profession that interests you, but don't close other doors."],
+        ["Build your portfolio", "A small website, a research project, a video, a volunteer initiative. Real projects show what you can do better than grades."],
+        ["Talk to professionals", "Ask your parents' friends what their working day looks like. Try spending a day alongside someone at work."],
+        ["Enter competitions", "Olympiads, hackathons, project contests. They teach you to work under pressure and as part of a team."] ] },
+      { when: "Always", h: "Keep in mind", tips: [
+        ["AI is your teacher, not an answer sheet", "Ask AI to explain things, quiz you and check your work. If you just copy, you don't learn."],
+        ["Check your sources", "The internet is full of both truth and lies. Always look for information in at least two reliable sources."],
+        ["Don't be afraid of mistakes", "In the future, people will change professions several times in their lives. Changing direction is not failure; it's adaptability."],
+        ["Take care of yourself", "Sleep, exercise and friends. A rested brain learns and creates better."] ] }
+    ]
+  };
+
+  const TEXT = { hy: HY, en: EN };
+
+  /* =====================================================================
+     State
+     ===================================================================== */
+  const STATE = { lang: "hy", age: 15, field: "tech", game: [], step: 0, answers: [], done: false, chosen: null };
+  try { const l = localStorage.getItem("fw-lang"); if (l === "hy" || l === "en") STATE.lang = l; } catch (e) {}
+  let S = TEXT[STATE.lang];
+  const other = () => TEXT[STATE.lang === "hy" ? "en" : "hy"];
+
+  const QMAX = {};
+  TKEYS.forEach(t => { QMAX[t] = QW.reduce((s, q) => s + Math.max(...q.map(o => o[t] || 0)), 0); });
+
+  /* =====================================================================
+     Helpers
+     ===================================================================== */
+  const li = s => "<li>" + s + "</li>";
+  function joinList(items) {
+    if (items.length < 2) return items.join("");
+    return items.slice(0, -1).join(", ") + " " + S.ui.and + " " + items[items.length - 1];
+  }
+  function head(i, title, intro) {
+    return '<div class="sec-head"><span class="sec-letter" aria-hidden="true">' + S.ui.letters[i] + '</span><h2>' + title + '</h2><p>' + intro + '</p></div>';
+  }
+  function pager(v) {
+    const order = VIEWS.slice(1), i = order.indexOf(v);
+    const prev = i === 0 ? "home" : order[i - 1], next = order[i + 1];
+    return '<nav class="pager" aria-label="' + S.ui.pagerAria + '">' +
+      '<a class="btn" href="#' + prev + '">← ' + S.ui.viewNames[prev] + '</a>' +
+      (next ? '<a class="btn primary" href="#' + next + '">' + S.ui.viewNames[next] + ' →</a>'
+            : '<a class="btn primary" href="#home">' + S.ui.backHome + '</a>') +
+      '</nav>';
+  }
+
+  /* =====================================================================
+     Header + footer
+     ===================================================================== */
+  function renderChrome() {
+    document.documentElement.lang = STATE.lang;
+    document.title = S.ui.docTitle;
+    $("#brand").textContent = S.ui.brand;
+    const nav = $("#nav");
+    nav.setAttribute("aria-label", S.ui.navAria);
+    nav.innerHTML = VIEWS.slice(1).map((v, i) => '<a href="#' + v + '"><b>' + S.ui.letters[i] + '</b>' + S.ui.nav[i] + '</a>').join("");
+    document.querySelectorAll(".lang button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.lang === STATE.lang)));
+    $("#foot").innerHTML = "<p>" + S.ui.foot1 + "</p><p>" + S.ui.foot2 + "</p>";
+  }
+
+  /* =====================================================================
+     Start screen
+     ===================================================================== */
+  function renderHome() {
+    const u = S.ui;
+    let ages = "";
+    for (let a = 12; a <= 18; a++) ages += '<button type="button" data-age="' + a + '">' + a + '</button>';
+    $("#home").innerHTML =
+      '<div class="wrap hero"><div class="hero-grid"><div>' +
+        '<p class="eyebrow">' + u.eyebrow + '</p><h1>' + u.h1 + '</h1><p class="lead">' + u.lead + '</p>' +
+        '<div class="cta"><a class="btn primary" href="#test">' + u.cta1 + '</a><a class="btn" href="#professions">' + u.cta2 + '</a></div>' +
+      '</div>' +
+      '<div class="yearcard">' +
+        '<p class="ylabel" id="age-label">' + u.ageLabel + '</p>' +
+        '<div class="ages" id="ages" role="group" aria-labelledby="age-label">' + ages + '</div>' +
+        '<div><p class="muted">' + u.startWork + '</p><p class="bigyear" id="bigyear"></p></div>' +
+        '<p id="yeartext" aria-live="polite"></p>' +
+        '<p class="note">' + u.ageNote + '</p>' +
+      '</div></div>' +
+      '<div class="stats">' + u.stats.map(s => '<div class="stat"><span class="num">' + s[0] + '</span><span class="cap">' + s[1] + '</span></div>').join("") + '</div>' +
+      '<p class="source">' + u.source + '</p></div>' +
+      '<div class="wrap menu-wrap"><h2 class="menu-title">' + u.menuTitle + '</h2><div class="menu">' +
+        VIEWS.slice(1).map((v, i) => '<a class="mcard' + (v === "test" ? " featured" : "") + '" href="#' + v + '"><span class="mletter">' + u.letters[i] + '</span><span class="mbody"><b>' + u.menu[i][0] + '</b><span>' + u.menu[i][1] + '</span></span></a>').join("") +
+      '</div></div>';
+    $("#ages").addEventListener("click", e => {
+      const b = e.target.closest("button[data-age]");
+      if (b) { STATE.age = +b.dataset.age; setAge(); }
+    });
+    setAge();
+  }
+  function setAge() {
+    const years = Math.max(1, 22 - STATE.age);
+    $("#bigyear").textContent = new Date().getFullYear() + years;
+    $("#yeartext").textContent = S.ui.yearText(years);
+    document.querySelectorAll("#ages button").forEach(b => b.setAttribute("aria-pressed", String(+b.dataset.age === STATE.age)));
+  }
+
+  /* =====================================================================
+     Ա / A: professions
+     ===================================================================== */
+  function profCard(p) {
+    const t = S.profs[p.id];
+    return '<article class="prof" style="--fc:' + FIELD_COLORS[p.field] + '">' +
+      '<p class="alt" lang="' + (STATE.lang === "hy" ? "en" : "hy") + '">' + other().profs[p.id].name + '</p>' +
+      '<h4>' + t.name + '</h4>' +
+      '<p>' + t.does + '</p>' +
+      '<p class="why"><b>' + S.ui.whyLabel + '</b> ' + t.why + '</p>' +
+      '<div class="chips"><span class="lbl">' + S.ui.subjLabel + '</span>' + t.subjects.map(s => '<span class="chip">' + s + '</span>').join("") + '</div>' +
+      '</article>';
+  }
+  function renderProfessions() {
+    const u = S.ui;
+    $("#professions").innerHTML = '<div class="wrap">' + head(0, u.profTitle, u.profIntro) +
+      '<div class="tabs" role="tablist" aria-label="' + u.fieldsAria + '">' +
+        FIELD_KEYS.map(k => '<button type="button" class="tab" role="tab" data-f="' + k + '" aria-selected="' + (k === STATE.field) + '" style="--fc:' + FIELD_COLORS[k] + '"><i></i>' + S.fields[k] + '</button>').join("") +
+      '</div>' +
+      '<div class="profgrid" role="tabpanel">' + PROFS.filter(p => p.field === STATE.field).map(profCard).join("") + '</div>' +
+      pager("professions") + '</div>';
+    $("#professions .tabs").addEventListener("click", e => {
+      const b = e.target.closest(".tab");
+      if (b) { STATE.field = b.dataset.f; renderProfessions(); $('#professions .tab[data-f="' + STATE.field + '"]').focus(); }
+    });
+  }
+
+  /* =====================================================================
+     Բ / B: skills
+     ===================================================================== */
+  function skillItem(s) {
+    return '<div class="skill"><h4>' + s.n + '<span lang="' + (STATE.lang === "hy" ? "en" : "hy") + '">' + s.en + '</span></h4><p>' + s.d + '</p>' +
+      '<p class="try"><b>' + S.ui.practice + '</b> ' + s.t + '</p></div>';
+  }
+  function renderSkills() {
+    const u = S.ui;
+    $("#skills").innerHTML = '<div class="wrap">' + head(1, u.skillsTitle, u.skillsIntro) +
+      '<div class="tshape">' +
+        '<div class="tdiag" aria-hidden="true"><div class="bar">' + u.tBar + '<small>' + u.tBarSmall + '</small></div><div class="stem">' + u.tStem + '<small>' + u.tStemSmall + '</small></div></div>' +
+        '<div class="tside"><p class="prose">' + u.tText + '</p><p class="callout">' + u.callout + '</p></div>' +
+      '</div>' +
+      '<div class="skillcols">' +
+        '<div class="skillcol"><h3>' + u.softTitle + '</h3><p>' + u.softSub + '</p>' + S.soft.map(skillItem).join("") + '</div>' +
+        '<div class="skillcol"><h3>' + u.hardTitle + '</h3><p>' + u.hardSub + '</p>' + S.hard.map(skillItem).join("") + '</div>' +
+      '</div>' + pager("skills") + '</div>';
+  }
+
+  /* =====================================================================
+     Գ / C: AI, automation and the class game
+     ===================================================================== */
+  function renderAI() {
+    const u = S.ui;
+    $("#ai").innerHTML = '<div class="wrap">' + head(2, u.aiTitle, u.aiIntro) +
+      '<h3 class="sub">' + u.shiftTitle + '</h3>' +
+      '<div class="shift" role="list">' +
+        '<div class="shift-head" aria-hidden="true"><span>' + u.shiftHead[0] + '</span><span></span><span>' + u.shiftHead[1] + '</span><span>' + u.shiftHead[2] + '</span></div>' +
+        S.shifts.map(s => '<div class="shift-row" role="listitem"><span class="old">' + s[0] + '</span><span class="arrow" aria-hidden="true">→</span><span class="new">' + s[1] + '</span><span class="how">' + s[2] + '</span></div>').join("") +
+      '</div>' +
+      '<p class="principle">' + u.principle + '</p>' +
+      '<h3 class="sub">' + u.humanTitle + '</h3>' +
+      '<div class="human">' + S.human.map(h => '<article><h4>' + h.n + '</h4><p>' + h.d + '</p><p class="ex">' + h.ex + '</p></article>').join("") + '</div>' +
+      '<h3 class="sub">' + u.gameTitle + '</h3>' +
+      '<div class="game-top"><p class="prose">' + u.gameIntro + '</p>' +
+        '<div class="game-tools"><span class="score" id="score"></span><button class="btn" id="resetgame" type="button">' + u.reset + '</button></div></div>' +
+      '<div class="tasks" id="tasks"></div>' +
+      pager("ai") + '</div>';
+    $("#tasks").addEventListener("click", e => {
+      const b = e.target.closest("button[data-k]");
+      if (!b || b.disabled) return;
+      STATE.game[+b.dataset.i] = b.dataset.k;
+      renderGame();
+      const exp = document.querySelector('#tasks .task[data-i="' + b.dataset.i + '"] .exp');
+      if (exp) exp.focus();
+    });
+    $("#resetgame").addEventListener("click", () => { STATE.game = []; renderGame(); });
+    renderGame();
+  }
+  function renderGame() {
+    const u = S.ui;
+    let answered = 0, correct = 0;
+    $("#tasks").innerHTML = S.tasks.map((t, i) => {
+      const ans = TASK_ANS[i], ch = STATE.game[i];
+      if (ch) { answered++; if (ch === ans) correct++; }
+      const buttons = ["ai", "human", "both"].map(k => {
+        let cls = "";
+        if (ch) { if (k === ans) cls = "right"; else if (k === ch) cls = "wrong"; }
+        return '<button type="button" data-i="' + i + '" data-k="' + k + '"' + (cls ? ' class="' + cls + '"' : "") + (ch ? " disabled" : "") + '>' + u.labels[k] + '</button>';
+      }).join("");
+      const exp = ch ? '<p class="exp" tabindex="-1">' + (ch === ans ? '<b class="ok">' + u.right + '</b> ' : '<b class="no">' + u.wrong(u.labels[ans]) + '</b> ') + t.e + '</p>' : "";
+      return '<div class="task" data-i="' + i + '"><p class="q">' + t.q + '</p><div class="choices">' + buttons + '</div>' + exp + '</div>';
+    }).join("");
+    $("#score").textContent = u.score(correct, answered);
+  }
+
+  /* =====================================================================
+     Դ / D: quiz
+     ===================================================================== */
+  function profileOf(ans) {
+    const u = {}; TKEYS.forEach(t => u[t] = 0);
+    ans.forEach((ai, qi) => { const w = QW[qi][ai]; Object.keys(w).forEach(t => u[t] += w[t]); });
+    return u;
+  }
+  function rank(u) {
+    return PROFS.map(p => {
+      let dot = 0, norm = 0;
+      TKEYS.forEach(t => { const w = p.w[t] || 0; dot += (QMAX[t] ? u[t] / QMAX[t] : 0) * w; norm += w * w; });
+      return { p, s: dot / Math.sqrt(norm) };
+    }).sort((a, b) => b.s - a.s);
+  }
+  function renderTest() {
+    $("#test").innerHTML = '<div class="wrap">' + head(3, S.ui.testTitle, S.ui.testIntro) +
+      '<div class="quiz" id="quiz"></div>' + pager("test") + '</div>';
+    renderQuiz();
+  }
+  function renderQuiz() { if (STATE.done) renderResult(); else renderQuestion(); }
+
+  function renderQuestion() {
+    const u = S.ui, n = QW.length, q = S.questions[STATE.step];
+    const quizEl = $("#quiz");
+    quizEl.innerHTML =
+      '<div class="qprog"><span>' + u.qOf(STATE.step + 1, n) + '</span></div>' +
+      '<div class="qbar"><span style="width:' + (STATE.step / n * 100) + '%"></span></div>' +
+      '<h3 class="qtext">' + q.q + '</h3>' +
+      '<div class="opts">' + q.o.map((t, i) =>
+        '<button type="button" class="opt" data-o="' + i + '" aria-pressed="' + (STATE.answers[STATE.step] === i) + '"><span class="ltr">' + u.optLetters[i] + '</span><span>' + t + '</span></button>').join("") +
+      '</div>' +
+      (STATE.step > 0 ? '<div class="qnav"><button type="button" class="linkbtn" id="qback">' + u.back + '</button></div>' : "");
+    quizEl.querySelector(".opts").addEventListener("click", e => {
+      const b = e.target.closest(".opt");
+      if (!b) return;
+      const i = +b.dataset.o;
+      STATE.answers[STATE.step] = i;
+      quizEl.querySelectorAll(".opt").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+      setTimeout(() => {
+        if (STATE.step < n - 1) STATE.step++; else STATE.done = true;
+        renderQuiz();
+        const first = quizEl.querySelector(".opt, .aname");
+        if (first && STATE.done) quizEl.scrollIntoView({ block: "start" });
+      }, 260);
+    });
+    const back = $("#qback");
+    if (back) back.addEventListener("click", () => { STATE.step--; renderQuiz(); });
+  }
+
+  function renderResult() {
+    const u = S.ui;
+    const prof = profileOf(STATE.answers);
+    const ranked = rank(prof);
+    const main = STATE.chosen ? (ranked.find(x => x.p.id === STATE.chosen) || ranked[0]).p : ranked[0].p;
+    const alts = ranked.map(x => x.p).filter(p => p.id !== main.id).slice(0, 3);
+    const t = S.profs[main.id];
+
+    const pct = {}; TKEYS.forEach(k => pct[k] = QMAX[k] ? Math.round(prof[k] / QMAX[k] * 100) : 0);
+    const order = TKEYS.slice().sort((a, b) => pct[b] - pct[a]);
+    const a1 = S.archetypes[order[0]], a2 = S.archetypes[order[1]];
+    const topTraits = order.filter(k => pct[k] > 0).slice(0, 3);
+    let shared = topTraits.filter(k => main.w[k]);
+    if (!shared.length) shared = topTraits.slice(0, 2);
+    const traitList = joinList(shared.map(k => "<b>" + S.traits[k] + "</b>"));
+
+    const quizEl = $("#quiz");
+    quizEl.innerHTML =
+      '<div class="result" style="--fc:' + FIELD_COLORS[main.field] + '">' +
+        '<div><div class="qprog"><span>' + u.result + '</span></div><div class="qbar"><span style="width:100%"></span></div></div>' +
+        '<div class="arche">' +
+          '<p class="eyebrow">' + u.yourType + '</p>' +
+          '<h3 class="aname">' + a1.name + '</h3>' +
+          '<p class="rlead">' + a1.desc + '</p>' +
+          '<p class="second">' + u.second(a2.name, a2.short) + '</p>' +
+        '</div>' +
+        '<div class="rcols three">' +
+          '<div class="rbox"><h4>' + u.strengthsT + '</h4><ul>' + a1.strengths.map(li).join("") + '</ul></div>' +
+          '<div class="rbox"><h4>' + u.shineT + '</h4><p>' + a1.shine + '</p></div>' +
+          '<div class="rbox"><h4>' + u.growT + '</h4><p>' + a1.grow + '</p></div>' +
+        '</div>' +
+        '<div class="rbox"><h4>' + u.profileT + '</h4><div class="profile">' +
+          order.map(k => '<div class="prow"><span>' + S.traits[k] + '</span><span class="track"><span class="fill" style="width:' + pct[k] + '%"></span></span><span class="pct">' + pct[k] + '%</span></div>').join("") +
+        '</div></div>' +
+        '<div class="rprof">' +
+          '<p class="eyebrow">' + u.matchEyebrow + '</p>' +
+          '<h3 class="rname">' + t.name + '</h3>' +
+          '<p class="tag"><i></i>' + S.fields[main.field] + '</p>' +
+          '<p class="rlead">' + u.traitsLine(traitList) + '</p>' +
+          '<p class="prose">' + t.does + ' ' + t.why + '</p>' +
+        '</div>' +
+        '<div class="rcols">' +
+          '<div class="rbox"><h4>' + u.needSkills + '</h4><ul>' + t.skills.map(li).join("") + '</ul></div>' +
+          '<div class="rbox"><h4>' + u.startNow + '</h4><ul>' + t.steps.map(li).join("") + '</ul></div>' +
+        '</div>' +
+        '<div class="alts-block"><h4>' + u.alsoFit + '</h4><div class="alts">' +
+          alts.map(p => '<button type="button" class="btn" data-alt="' + p.id + '">' + S.profs[p.id].name + '</button>').join("") +
+        '</div></div>' +
+        '<p class="disclaimer">' + u.disclaimer + '</p>' +
+        '<div class="cta"><button type="button" class="btn primary" id="retry">' + u.retry + '</button>' +
+          '<a class="btn" href="#professions" id="allprofs">' + u.allProfs + '</a></div>' +
+      '</div>';
+    quizEl.querySelector(".alts").addEventListener("click", e => {
+      const b = e.target.closest("button[data-alt]");
+      if (!b) return;
+      STATE.chosen = b.dataset.alt;
+      renderQuiz();
+      quizEl.querySelector(".rprof").scrollIntoView({ block: "start" });
+    });
+    $("#retry").addEventListener("click", () => {
+      STATE.step = 0; STATE.answers = []; STATE.done = false; STATE.chosen = null;
+      renderQuiz();
+      quizEl.scrollIntoView({ block: "start" });
+    });
+    $("#allprofs").addEventListener("click", () => { STATE.field = main.field; renderProfessions(); });
+  }
+
+  /* =====================================================================
+     Ե / E: tips
+     ===================================================================== */
+  function renderTips() {
+    const u = S.ui;
+    $("#tips").innerHTML = '<div class="wrap">' + head(4, u.tipsTitle, u.tipsIntro) +
+      '<div class="stages">' + S.stages.map(s =>
+        '<div class="stage"><p class="when">' + s.when + '</p><h3>' + s.h + '</h3>' +
+          s.tips.map(tp => '<div class="tip"><h4>' + tp[0] + '</h4><p>' + tp[1] + '</p></div>').join("") +
+        '</div>').join("") + '</div>' +
+      '<div class="closing"><p>' + u.closing + '</p></div>' +
+      pager("tips") + '</div>';
+  }
+
+  /* =====================================================================
+     Routing and language
+     ===================================================================== */
+  function renderAll() {
+    renderChrome(); renderHome(); renderProfessions(); renderSkills(); renderAI(); renderTest(); renderTips();
+  }
+  function route(scroll) {
+    let id = location.hash.slice(1);
+    if (!VIEWS.includes(id)) id = "home";
+    VIEWS.forEach(v => { document.getElementById(v).hidden = v !== id; });
+    document.querySelectorAll("#nav a").forEach(a => {
+      if (a.getAttribute("href") === "#" + id) a.setAttribute("aria-current", "page");
+      else a.removeAttribute("aria-current");
+    });
+    if (scroll) window.scrollTo({ top: 0, behavior: "instant" });
+  }
+  function setLang(l) {
+    if (l === STATE.lang) return;
+    STATE.lang = l; S = TEXT[l];
+    try { localStorage.setItem("fw-lang", l); } catch (e) {}
+    renderAll(); route(false);
+  }
+  document.querySelector(".lang").addEventListener("click", e => {
+    const b = e.target.closest("button[data-lang]");
+    if (b) setLang(b.dataset.lang);
+  });
+  window.addEventListener("hashchange", () => route(true));
+
+  renderAll();
+  route(true);
+})();
+</script>
+
+</body></html>
